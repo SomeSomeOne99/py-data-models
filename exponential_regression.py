@@ -12,7 +12,6 @@ class ExponentialRegression(Model):
         self.b = (y[0] / x[0]) ** (1 / x[0]) # Set initial weight value using first value
         loss = sum([(y[i] - self.predict(x[i]))**2 for i in range(len(x))]) / len(x) # Calculate initial MSE loss
         prevLoss = float("inf")
-        prevB = self.b # Used to revert negative changes
         iteration = 0
         while loss > 0 and iteration < iterationLimit and prevLoss > loss: # Continue until correct parameter value found or iteration limit reached
             prevLoss = loss
