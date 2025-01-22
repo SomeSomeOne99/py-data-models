@@ -19,6 +19,7 @@ class ExponentialRegression(Model):
             prevB = self.b
             self.b -= loss / (2 * self.a * sum([(x[i] * (self.b ** (x[i] - 1)) * (self.a * (self.b ** x[i]) - y[i])) for i in range(len(x))])) # Use Newton-Raphson method to iteratively improve parameter
             loss = sum([(y[i] - self.predict(x[i]))**2 for i in range(len(x))]) / len(x) # Calculate new MSE loss
+            iteration += 1
         if loss > prevLoss:
             self.b = prevB
     def train_naive(self, x, y, initialPrecision = 10, finalPrecision = -15): # Alternative naive iteration algorithm
