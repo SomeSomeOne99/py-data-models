@@ -1,6 +1,4 @@
 from base_model import Model # Import base Model class
-from random import randint # Import randint function for training selection
-from math import exp
 class ExponentialRegression(Model):
     def __init__(self, a = None, b = None): # No initial weights by default
         self.a, self.b = a, b # Set initial weights if given
@@ -11,7 +9,7 @@ class ExponentialRegression(Model):
         if len(x) != len(y):
             raise ValueError("Data lists must be same length") # Data length mismatch
         self.a = x[0] # Set weight to first data point
-        self.b = (y[0] / x[0]) * exp(1/x[0]) # Set initial weight value using first value
+        self.b = (y[0] / x[0]) ** (1 / x[0]) # Set initial weight value using first value
         change = 10 ** initialPrecision # Initial weight variation
         minChange = 10 ** finalPrecision # Minimum weight variation for given precision
         while change > minChange: # Continue until minimum precision achieved
