@@ -9,7 +9,7 @@ class Matrix():
         elif type(data) == int or type(data) == float:
             self.data = array([data]) # Create 1x1 array
         else:
-            raise TypeError("Data must be a list, number or array") # Invalid type
+            raise TypeError("Data must be a list, number or array, type was " + str(type(data))) # Invalid type
     def __matmul__(self, other):
         return Matrix(self.data @ other.data)
     def __mul__(self, other):
