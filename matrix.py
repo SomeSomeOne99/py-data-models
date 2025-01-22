@@ -1,4 +1,4 @@
-from numpy import array, ndarray # Array
+from numpy import array, ndarray, int32 # Array
 from numpy.linalg import inv # Matrix inversion function
 class Matrix():
     def __init__(self, data):
@@ -6,7 +6,7 @@ class Matrix():
             self.data = data # Already correct type
         elif type(data) == list:
             self.data = array(data) # Convert list to array
-        elif type(data) == int or type(data) == float:
+        elif type(data) == int or type(data) == float or type(data) == int32:
             self.data = array([data]) # Create 1x1 array
         else:
             raise TypeError("Data must be a list, number or array, type was " + str(type(data))) # Invalid type
