@@ -3,9 +3,9 @@ from math import log # Import ln()
 class LinearRegression(Model):
     def __init__(self, a = None, b = None): # No initial weights by default
         self.a, self.b = a, b
-    def train(self, x, y, iterationLimit = 10000): # Train model weights on given data
-        self.a = x[0] # Set weight to first data point
-        self.b = 1 #(y[0] - x[0]) / log(x[0]) # Set initial weight value using first value
+    def train(self, x, y, iterationLimit = 10): # Train model weights on given data
+        self.a = y[0] # Set weight to first data point
+        self.b = y[1] - y[0] #(y[0] - x[0]) / log(x[0]) # Set initial weight value using first value
         bestA, bestB = self.a, self.b
         loss = sum([(y[i] - self.predict(x[i]))**2 for i in range(len(x))]) / len(x) # Calculate initial MSE loss
         minLoss = float("inf")
