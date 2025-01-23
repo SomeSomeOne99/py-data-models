@@ -11,8 +11,8 @@ class LinearRegression(Model):
         minLoss = float("inf")
         iteration = 0
         while loss > 0 and iteration < iterationLimit and minLoss != loss: # Continue until correct parameter value found, iteration limit reached or model stagnation
-            minLoss = loss
             if minLoss > loss:
+                minLoss = loss
                 bestA, bestB = self.a, self.b # New best parameters
             # Use Newton-Raphson method to iteratively improve parameters
             newA = self.a - loss / (2 * sum([(self.predict(x[i]) - y[i]) for i in range(len(x))])) # Prevent change until all gradients calculated
