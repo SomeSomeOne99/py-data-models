@@ -51,7 +51,16 @@ class ExponentialRegression(Model):
             return None # No learned weights
         return self.a * (self.b ** input) # y = a b^x
 expModel = ExponentialRegression()
-expModel.train([1, 3], [2.718, 20.086]) # Train with Newton-Raphson method
-print(expModel.predict(10)) # expecting e^10 = ~22026.5
-expModel.train_naive([1, 3], [2.718, 20.086]) # Train with naive iterative method (clears past learning)
-print(expModel.predict(10))
+targetModel = ExponentialRegression(2, -3)
+print("train")
+expModel.train([x for x in range(30)], [targetModel.predict(x) for x in range(30)]) # Train with Newton-Raphson method
+for x in [0, 1, 15, 30, 40]:
+    print(x, ":", expModel.predict(x), "->", targetModel.predict(x))
+print("a", ":", expModel.a, "->", targetModel.a)
+print("b", ":", expModel.b, "->", targetModel.b)
+print("train_naive")
+expModel.train_naive([x for x in range(15)], [targetModel.predict(x) for x in range(15)]) # Train with naive iterative method (clears past learning)
+for x in [0, 1, 15, 30, 40]:
+    print(x, ":", expModel.predict(x), "->", targetModel.predict(x))
+print("a", ":", expModel.a, "->", targetModel.a)
+print("b", ":", expModel.b, "->", targetModel.b)
