@@ -8,8 +8,8 @@ class ExponentialRegression(Model):
             raise TypeError("Data must be a list") # Invalid data type
         if len(x) != len(y):
             raise ValueError("Data lists must be same length") # Data length mismatch
-        self.a = x[0] # Set weight to first data point
-        self.b = (y[0] / x[0]) ** (1 / x[0]) # Set initial weight value using first value
+        self.a = y[0] # Set weight to first data point
+        self.b = ((y[0] / x[0]) ** (1 / x[0])) if x[0] != 0 else ((y[1] / x[1]) ** (1 / x[1])) # Set initial weight value using first value
         loss = sum([(y[i] - self.predict(x[i]))**2 for i in range(len(x))]) / len(x) # Calculate initial MSE loss
         prevLoss = float("inf")
         iteration = 0
@@ -27,8 +27,8 @@ class ExponentialRegression(Model):
             raise TypeError("Data must be a list") # Invalid data type
         if len(x) != len(y):
             raise ValueError("Data lists must be same length") # Data length mismatch
-        self.a = x[0] # Set weight to first data point
-        self.b = (y[0] / x[0]) ** (1 / x[0]) # Set initial weight value using first value
+        self.a = y[0] # Set weight to first data point
+        self.b = ((y[0] / x[0]) ** (1 / x[0])) if x[0] != 0 else ((y[1] / x[1]) ** (1 / x[1])) # Set initial weight value using first value
         change = 10 ** initialPrecision # Initial weight variation
         minChange = 10 ** finalPrecision # Minimum weight variation for given precision
         while change > minChange: # Continue until minimum precision achieved
