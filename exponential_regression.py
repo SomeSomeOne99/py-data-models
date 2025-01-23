@@ -11,16 +11,17 @@ class ExponentialRegression(Model):
         self.a = y[0] # Set weight to first data point
         self.b = ((y[0] / x[0]) ** (1 / x[0])) if x[0] != 0 else ((y[1] / x[1]) ** (1 / x[1])) # Set initial weight value using first value
         loss = sum([(y[i] - self.predict(x[i]))**2 for i in range(len(x))]) / len(x) # Calculate initial MSE loss
-        prevLoss = float("inf")
+        minLoss = float("inf")
         iteration = 0
-        while loss > 0 and iteration < iterationLimit and prevLoss > loss: # Continue until correct parameter value found or iteration limit reached
-            prevLoss = loss
-            prevB = self.b
+        while loss > 0 and iteration < iterationLimit: # Continue until correct parameter value found or iteration limit reached
+            if minLoss > loss:
+                minLoss = loss
+                bestB = self.b
             self.b -= loss / (2 * self.a * sum([(x[i] * (self.b ** (x[i] - 1)) * (self.a * (self.b ** x[i]) - y[i])) for i in range(len(x))])) # Use Newton-Raphson method to iteratively improve parameter
             loss = sum([(y[i] - self.predict(x[i]))**2 for i in range(len(x))]) / len(x) # Calculate new MSE loss
             iteration += 1
-        if loss > prevLoss:
-            self.b = prevB
+        if loss > minLoss:
+            self.b = bestB
     def train_naive(self, x, y, initialPrecision = 10, finalPrecision = -15): # Alternative naive iteration algorithm
         # Input type checks
         if type(x) != list or type(y) != list:
