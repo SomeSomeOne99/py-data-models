@@ -59,8 +59,7 @@ As the input value increases, the rate of change of the output increases, produc
 
 $a = y_0$
 
-$b = \begin{cases} (\frac{y_0}{x_0})^{x_0^{-1}}, x_0 \neq 0 \\
-(\frac{y_1}{x_1})^{x_1^{-1}}, otherwise \end{cases}$
+$b = (\frac{y_0}{x_0})^{x_0^{-1}}, x_0 \neq 0; (\frac{y_1}{x_1})^{x_1^{-1}}, otherwise$
 
 - $y$: model output
 - $x$: model input
@@ -89,8 +88,7 @@ After each adjustment, if the loss of the overall model has been reduced, the pa
 
 $a = y_0$
 
-$b = \begin{cases} (\frac{y_0}{x_0})^{x_0^{-1}}, x_0 \neq 0 \\
-(\frac{y_1}{x_1})^{x_1^{-1}}, otherwise \end{cases}$
+$b = (\frac{y_0}{x_0})^{x_0^{-1}}, x_0 \neq 0; (\frac{y_1}{x_1})^{x_1^{-1}}, otherwise$
 
 - $y$: model output
 - $x$: model input
