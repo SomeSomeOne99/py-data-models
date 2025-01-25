@@ -21,18 +21,21 @@ Every model inheriting the base `Model` class (`base_model.py`) implements a var
 ### Linear regression (`LinearRegression`)
 The linear regression model is used to predict a single output variable using one or more input values with linear relationships to the output.
 #### Model application (`LinearRegression.predict(x)`)
-$y = \bold{x}^T\bold{w}$
+
+$y = \textbf{x}^T\textbf{w}$
 
 - $y$: model output
-- $\bold{x}$: model inputs vector
-- $\bold{w}$: model weights vector
+- $\textbf{x}$: model inputs vector
+- $\textbf{w}$: model weights vector
 
 Each weight in the weights vector corresponds to and scales an input in the inputs vector, allowing for the implementation of linear relationships.
 #### Model training (`LinearRegression.train(X, y)`)
-$\bold{w} = (\bold{X}^T\bold{X})^{-1}\bold{X}^T\bold{y}$
-- $\bold{w}$: model weights vector
-- $\bold{X}$: provided input matrix
-- $\bold{y}$: target output vector
+
+$\textbf{w} = (\textbf{X}^T\textbf{X})^{-1}\textbf{X}^T\textbf{y}$
+
+- $\textbf{w}$: model weights vector
+- $\textbf{X}$: provided input matrix
+- $\textbf{y}$: target output vector
 
 The matrix-based structure of the model allows for the model weights to be calculated exactly from the input matrix and target output vector.
 
@@ -43,6 +46,7 @@ The exponential regression model is used to model a relationship between a singl
 #### Model application (`ExponentialRegression.predict(x)`)
 
 $y = ab^x$
+
 - $y$: model output
 - $x$: model input
 - $a, b$: model parameters
@@ -54,8 +58,10 @@ As the input value increases, the rate of change of the output increases, produc
 ##### Parameter initialisation
 
 $a = y_0$
+
 $b = \begin{cases} (\frac{y_0}{x_0})^{x_0^{-1}}, x_0 \neq 0 \\
 (\frac{y_1}{x_1})^{x_1^{-1}}, otherwise \end{cases}$
+
 - $y$: model output
 - $x$: model input
 - $a, b$: model parameters
@@ -67,10 +73,12 @@ The first point with a non-zero zero input is used to calculate the initial para
 Since the value for the parameter $a$ is assumed to be correct, only the parameter $b$ is optimised by training.
 During each epoch, $b$ is adjusted to minimise the model loss (total MSE across training data) using the Newton-Raphson method, as following:
 
-$loss = \sum_{i=1}^{|\bold{x}|}(ab^{\bold{x}_i} - y_i)^2$
-$b_n = b_{n-1} - \frac{1}{2a}loss\cdot(\sum_{i=1}^{|\bold{x}|}(\bold{x}_ib^{\bold{x}_i - 1}(ab^{\bold{x}_i} - \bold{y}_i)))^{-1}$
-- $\bold{y}$: model outputs
-- $\bold{x}$: model inputs
+$loss = \sum_{i=1}^{|\textbf{x}|}(ab^{\textbf{x}_i} - y_i)^2$
+
+$b_n = b_{n-1} - \frac{1}{2a}loss\cdot(\sum_{i=1}^{|\textbf{x}|}(\textbf{x}_ib^{\textbf{x}_i - 1}(ab^{\textbf{x}_i} - \textbf{y}_i)))^{-1}$
+
+- $\textbf{y}$: model outputs
+- $\textbf{x}$: model inputs
 - $a, b$: model parameters
 
 After each adjustment, if the loss of the overall model has been reduced, the parameter is value is preserved. If the loss stagnates or the iteration limit `iterationLimit` is reached, training exits. After training is complete, the last preserved parameter value is used to minimise loss.
@@ -80,8 +88,10 @@ After each adjustment, if the loss of the overall model has been reduced, the pa
 ##### Parameter initialisation
 
 $a = y_0$
+
 $b = \begin{cases} (\frac{y_0}{x_0})^{x_0^{-1}}, x_0 \neq 0 \\
 (\frac{y_1}{x_1})^{x_1^{-1}}, otherwise \end{cases}$
+
 - $y$: model output
 - $x$: model input
 - $a, b$: model parameters
@@ -97,6 +107,7 @@ Since the parameter $a$ is assumed to be the correct value, only the parameter $
 #### Model application (`LogarithmicRegression.predict(x)`)
 
 $y = a + b\ln{x}$
+
 - $y$: model output
 - $x$: model input
 - $a, b$: model parameters
@@ -108,7 +119,9 @@ As the input value increases, the rate of change of the output decreases, produc
 ##### Parameter initialisation
 
 $a = y_0$
+
 $b = \frac{y_1 - a}{\log{x_1}}$
+
 - $y$: model output
 - $x$: model input
 - $a, b$: model parameters
@@ -119,11 +132,14 @@ The first provided output is assumed to correspond to an input of 1, so the outp
 
 Both $a$ and $b$ are adjusted during training using the Newton-Raphson method to minimise the loss (total MSE) of the model, as following:
 
-$loss = \sum_{i=1}^{|\bold{x}|}(ab^{\bold{x}_i} - y_i)^2$
-$a_n = a_{n-1} - \frac{1}{2}loss\cdot(\sum_{i=1}^{|\bold{x}|}((a + b\ln{\bold{x}_i}) - \bold{y}_i))^{-1}$
-$b_n = b_{n-1} - \frac{1}{2}loss\cdot(\sum_{i=1}^{|\bold{x}|}((\ln{x_i}(a + b\ln{\bold{x}_i}) - \bold{y}_i)))^{-1}$
-- $\bold{y}$: model outputs
-- $\bold{x}$: model inputs
+$loss = \sum_{i=1}^{|\textbf{x}|}(ab^{\textbf{x}_i} - y_i)^2$
+
+$a_n = a_{n-1} - \frac{1}{2}loss\cdot(\sum_{i=1}^{|\textbf{x}|}((a + b\ln{\textbf{x}_i}) - \textbf{y}_i))^{-1}$
+
+$b_n = b_{n-1} - \frac{1}{2}loss\cdot(\sum_{i=1}^{|\textbf{x}|}((\ln{x_i}(a + b\ln{\textbf{x}_i}) - \textbf{y}_i)))^{-1}$
+
+- $\textbf{y}$: model outputs
+- $\textbf{x}$: model inputs
 - $a, b$: model parameters
 
 After each adjustment, if the loss of the overall model has been reduced, the parameter is value is preserved. If the loss stagnates or the iteration limit `iterationLimit` is reached, training exits. After training is complete, the last preserved parameter value is used to minimise loss.
@@ -133,6 +149,7 @@ After each adjustment, if the loss of the overall model has been reduced, the pa
 #### Model application (`LogisticRegression.predict(x)`)
 
 $y = \frac{m}{1 + e^{a + bx}}$
+
 - $y$: model output
 - $x$: model input
 - $a, b$: model parameters
@@ -144,7 +161,9 @@ The model output is within the range $(0,1)$, with large positive or negative in
 ##### Parameter initialisation
 
 $a = -1.1$
+
 $b = -1.1$
+
 - $a, b$: model parameters
 
 Both parameters are initialised to $-1.1$, which is an arbitrary constant that allows for training to optimise the values. While this will initially produce a considerably sub-optimal model, after a large number of training epochs, the impact of this arbitrary initialisation is minimal.
@@ -153,12 +172,16 @@ Both parameters are initialised to $-1.1$, which is an arbitrary constant that a
 
 The Newton-Raphson method is used to vary both parameters to minimuse the loss (total MSE) of the model:
 
-$loss = \sum_{i=1}^{|\bold{x}|}(ab^{\bold{x}_i} - y_i)^2$
-$m_n = m_{n-1} - \frac{1}{2}loss\cdot(\sum_{i=1}^{|\bold{x}|}(e^{-a-b\bold{x}_i}(m(1+e^{a+b\bold{x}_i})^{-1} - \bold{y}_i)))^{-1}$
-$a_n = a_{n-1} + \frac{1}{2me^a}loss\cdot(\sum_{i=1}^{|\bold{x}|}(e^{b\bold{x}_i}(1+e^{a+b\bold{x}_i})^{-2}(m(1+e^{a+b\bold{x}_i})^{-1} - \bold{y}_i)))^{-1}$
-$b_n = b_{n-1} + \frac{1}{2me^a}loss\cdot(\sum_{i=1}^{|\bold{x}|}(\bold{x}_ie^{b\bold{x}_i}(1+e^{a+b\bold{x}_i})^{-2}(m(1+e^{a+b\bold{x}_i})^{-1} - \bold{y}_i)))^{-1}$
-- $\bold{y}$: model outputs
-- $\bold{x}$: model inputs
+$loss = \sum_{i=1}^{|\textbf{x}|}(ab^{\textbf{x}_i} - y_i)^2$
+
+$m_n = m_{n-1} - \frac{1}{2}loss\cdot(\sum_{i=1}^{|\textbf{x}|}(e^{-a-b\textbf{x}_i}(m(1+e^{a+b\textbf{x}_i})^{-1} - \textbf{y}_i)))^{-1}$
+
+$a_n = a_{n-1} + \frac{1}{2me^a}loss\cdot(\sum_{i=1}^{|\textbf{x}|}(e^{b\textbf{x}_i}(1+e^{a+b\textbf{x}_i})^{-2}(m(1+e^{a+b\textbf{x}_i})^{-1} - \textbf{y}_i)))^{-1}$
+
+$b_n = b_{n-1} + \frac{1}{2me^a}loss\cdot(\sum_{i=1}^{|\textbf{x}|}(\textbf{x}_ie^{b\textbf{x}_i}(1+e^{a+b\textbf{x}_i})^{-2}(m(1+e^{a+b\textbf{x}_i})^{-1} - \textbf{y}_i)))^{-1}$
+
+- $\textbf{y}$: model outputs
+- $\textbf{x}$: model inputs
 - $a, b$: model parameters
 
 After each adjustment, if the loss of the overall model has been reduced, the parameter is value is preserved. If the loss stagnates or the iteration limit `iterationLimit` is reached, training exits. After training is complete, the last preserved parameter value is used to minimise loss.
