@@ -151,7 +151,7 @@ Both parameters are initialised to $-1.1$, which is an arbitrary constant that a
 
 ##### Parameter optimisation
 
-The Newton-Raphson model is used to vary both parameters to minimuse the loss (total MSE) of the model:
+The Newton-Raphson method is used to vary both parameters to minimuse the loss (total MSE) of the model:
 
 $loss = \sum_{i=1}^{|\bold{x}|}(ab^{\bold{x}_i} - y_i)^2$
 $m_n = m_{n-1} - \frac{1}{2}loss\cdot(\sum_{i=1}^{|\bold{x}|}(e^{-a-b\bold{x}_i}(m(1+e^{a+b\bold{x}_i})^{-1} - \bold{y}_i)))^{-1}$
