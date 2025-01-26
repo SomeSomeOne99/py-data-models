@@ -3,6 +3,7 @@ class SIR(Model):
     def __init__(self, infRate = None, recRate = None): # (infection rate, recovery rate) No initial weights by default
         self.infRate, self.recRate = infRate, recRate # Set initial weights if given
     def train(self, x, y, iterationLimit = 10000): # Train model weights on given data with Newton-Raphson method
+        raise NotImplementedError("This method is not implemented") # Prevent use of incomplete method
         # Input type checks
         if type(x) != list or type(y) != list:
             raise TypeError("Data must be a list") # Invalid data type
