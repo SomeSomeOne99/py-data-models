@@ -38,30 +38,44 @@ class SIR(Model):
             iteration += 1
         if loss > minLoss:
             self.recRate = bestRecRate
-    def train_naive(self, x, y, initialPrecision = 10, finalPrecision = -15): # Alternative naive iteration algorithm
+    def train_naive(self, x, y, initialPrecision = -1, finalPrecision = -15): # Alternative naive iteration algorithm
         # Input type checks
         if type(x) != list or type(y) != list:
             raise TypeError("Data must be a list") # Invalid data type
         if len(x) != len(y):
             raise ValueError("Data lists must be same length") # Data length mismatch
-        self.a = x[0] # Set weight to first data point
-        self.b = (y[0] / x[0]) ** (1 / x[0]) # Set initial weight value using first value
-        change = 10 ** initialPrecision # Initial weight variation
-        minChange = 10 ** finalPrecision # Minimum weight variation for given precision
-        while change > minChange: # Continue until minimum precision achieved
-            bChange = change
-            loss = sum([(y[i] - self.predict(x[i]))**2 for i in range(len(x))]) / len(x) # Calculate MSE loss
+        self.infRate = 0.1 # Arbitrary initialisation
+        self.recRate = 0.1
+        infChange = 10 ** initialPrecision # Initial weight increment
+        minChange = 10 ** finalPrecision # Minimum weight increment for given precision
+        while infChange > minChange: # Continue until minimum precision achieved
+            loss = sum([sum([(y[i][j] - predY)**2 for j, predY in enumerate(self.predict(x[i]))]) for i in range(len(x))]) # Calculate MSE loss (average deemed unnecessary, length division omitted)
             while True:
-                self.b += bChange
-                newLoss = sum([(y[i] - self.predict(x[i]))**2 for i in range(len(x))]) / len(x) # Calculate new MSE loss after change
+                self.infRate += infChange
+                # Find optimal recRate for current infRate
+                recChange = 10 ** initialPrecision # New increment for recRate
+                while recChange > minChange: # Continue until minimum precision achieved for recRate
+                    loss2 = sum([sum([(y[i][j] - predY)**2 for j, predY in enumerate(self.predict(x[i]))]) for i in range(len(x))]) # MSE, loss2 to prevent interference with infRate
+                    while True:
+                        self.recRate += recChange
+                        newLoss2 = sum([sum([(y[i][j] - predY)**2 for j, predY in enumerate(self.predict(x[i]))]) for i in range(len(x))]) # MSE, newLoss2 to prevent interference with infRate
+                        if newLoss2 >= loss2:
+                            self.recRate -= recChange # Reverse change
+                            recChange *= -1 # Reverse change direction
+                            if recChange > 0: # Change is positive after two switches
+                                break # Current precision achieved
+                        else:
+                            loss2 = newLoss2
+                    recChange *= 0.1 # Increase increment precision
+                newLoss = sum([sum([(y[i][j] - predY)**2 for j, predY in enumerate(self.predict(x[i]))]) for i in range(len(x))]) # New MSE loss after changes
                 if newLoss >= loss:
-                    self.b -= bChange # Reverse change
-                    bChange *= -1 # Reverse change direction
-                    if bChange > 0: # Change is positive after two switches
-                        break # current precision achieved
+                    self.infRate -= infChange # Reverse change
+                    infChange *= -1 # Reverse change direction
+                    if infChange > 0: # Change is positive after two switches
+                        break # Current precision achieved
                 else:
                     loss = newLoss
-            change *= 0.1 # Increase variation precision
+            infChange *= 0.1 # Increase increment precision
     def predict(self, x, step = 1): # Predict output for given input (S, I, R)
         if self.infRate is None or self.recRate is None:
             return None # No learned weights
@@ -77,8 +91,12 @@ class SIR(Model):
         return currentSIR
 sirModel = SIR()
 targetModel = SIR(0.5, 0.25)
-print(targetModel.predict(250))
+print("train")
 sirModel.train([x for x in range(100)], [targetModel.predict(x) for x in range(100)]) # Train with Newton-Raphson method
-print(sirModel.predict(10)) # expecting e^10 = ~22026.5
-sirModel.train_naive([1, 3], [2.718, 20.086]) # Train with naive iterative method (clears past learning)
 print(sirModel.predict(10))
+print("train_naive")
+sirModel.train_naive([x for x in range(100)], [targetModel.predict(x) for x in range(100)]) # Train with naive iterative method (clears past learning)
+for testX in [0, 10, 100, 1000]:
+    print(sirModel.predict(testX), "->", targetModel.predict(testX)) # Predict for given inputs
+print(sirModel.infRate, "->", targetModel.infRate)
+print(sirModel.recRate, "->", targetModel.recRate)
