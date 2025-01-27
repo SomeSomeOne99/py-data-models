@@ -15,8 +15,6 @@ class SIR(Model):
         self.recRate = 0.25
         for _ in range(iterationLimit): # Continue until iteration limit reached
             self.infRate -= sum([(y[i - 1][0] * y[i - 1][1] * ((y[i][0] - self.predict(x[i], initialInf, initialRec)[0]) + (y[i][1] - self.predict(x[i], initialInf, initialRec)[1]))) for i in range(1, len(x))]) # Use gradient descent to minimise loss with S and I data
-        # Train recRate with I and R data
-        for _ in range(iterationLimit): # Continue until iteration limit reached
             self.recRate -= sum([(y[i - 1][1] * y[i - 1][2] * ((y[i][1] - self.predict(x[i], initialInf, initialRec)[1]) + (y[i][2] - self.predict(x[i], initialInf, initialRec)[2]))) for i in range(1, len(x))]) # Use gradient descent to minimise loss with I and R data
     def train_(self, x, y, iterationLimit = 1000, initialInf = 0.1, initialRec = 0): # Gradient descent with use of best parameter tracking (may be less accurate than train())
         # Input type checks
