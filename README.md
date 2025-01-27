@@ -183,3 +183,61 @@ $b_n = b_{n-1} + \frac{1}{2me^a}loss\cdot(\sum_{i=1}^{|\textbf{x}|}(\textbf{x}_i
 - $a, b$: model parameters
 
 After each adjustment, if the loss of the overall model has been reduced, the parameter is value is preserved. If the loss stagnates or the iteration limit `iterationLimit` is reached, training exits. After training is complete, the last preserved parameter value is used to minimise loss.
+
+### SIR (Susceptible-Infected-Recovered)
+
+#### Model application (`SIR.predict(x)`)
+
+$\frac{dS}{dt} = -\beta S I$
+
+After each timestep, the susceptible population decreases by a change proportional to the infection rate $\beta$, the current susceptible population and the infected population. Generally, as $t \to \infty$, $S \to 0$, as all susceptible individuals become infected.
+
+$\frac{dI}{dt} = \beta S I - \gamma I$
+
+$\beta S I$ represents the susceptible individuals that are infected during the current timestep, and $\gamma I$ represents the infected individuals who recover during each timestep. As $t \to \infty$, $I \to 0$; however, depending on the values of $\beta$ and $\gamma$ used, $I$ may reach a maximum value, after which the rate of recovery becomes greater than the rate of new infections, or it may continuously decrease to $0$.
+
+$\frac{dR}{dt} = \gamma I$
+
+The rate of increase in the recovered population is equal to the decrease in the infected population during each timestep, as individuals that recover from the infected state enter the recovered state. With many combinations of parameters, as $t \to \infty$, $R \to 0$, as all susceptible individuals become infected and subsequently recover; otherwise, if $S \to S_{\infty}$, $R \to 1 - S_{\infty}$.
+
+> ##### Note on model usage
+> To improve the efficiency of repeated predictions, any calculated values are saved to `self.savedResults`. When changing any model parameters, this must be reset to an empty list (`self.savedResults = []`) to prevent fatal errors and incorrect further predictions.
+
+#### Model training
+
+##### Parameter initialisation
+
+$\beta = 0.1$
+
+$\gamma = 0.1$
+
+- $\beta, \gamma$: model parameters
+
+An arbitrary constant is used to initialise both $\beta$ (infection rate) and $\gamma$ (recovery rate), as the effect of any initialisaton on training accuracy quickly becomes negligible.
+
+##### Standard gradient descent (`SIR.train(x, y, iterationLimit, initialInf, initialRec)`)
+
+Gradient descent is used to vary both parameters with the following iterative formulae:
+
+$\beta_{n+1} = \beta_{n} - \sum_{i=0}^{|x|}((y_i)_S \cdot (y_i)_I \cdot (((y_i)_S - p(x_i)_S) + ((y_i)_I - p(x_i)_I)))$
+
+$\gamma_{n+1} = \gamma_{n} - \sum_{i=0}^{|x|}((y_i)_I \cdot (y_i)_R \cdot (((y_i)_I - p(x_i)_I) + ((y_i)_R - p(x_i)_R)))$
+
+- $y_i$: target output at position $i$
+- $x_i$: input at position $i$
+- $p(x)$: prediction with input $x$ and current values for $\beta$ and $\gamma$
+- $A_S$, $A_I$, $A_R$: $S$, $I$ and $R$ values from $A$
+- $\beta$: infection rate
+- $\gamma$: recovery rate
+
+##### Gradient descent with loss checks (`SIR.train_(x, y, iterationLimit, intialInf, initialRec)`)
+
+This uses the same iteration as the above gradient descent; however, after each change, the current model MSE loss is calculated. The parameter values with the lowest loss are then used as the final values, ensuring that, if training begins to diverge, the best known parameters are used.
+
+> This training algorithm produces considerably less optimal results than `SIR.train()` due to internal calculation differences. Since the gradient descent used is unlikely to diverge, the functionality provided by `SIR.train_()` is generally unnecessary and provides no benefit to training accuracy.
+
+##### Naive parameter variation (`SIR.train_naive(x, y, initialInf, initialRec, initialPrecision, finalPrecision)`)
+
+The model parameters $\beta$ and $\gamma$ are changed by decreasing powers of 10, with the variation starting at `10**initialPrecision` and ending after  the variation reaches `10**finalPrecision`. Initially, a value of $\beta$ is set with the current variation; the optimal value for $\gamma$ is then found through a similar process. The combination of values for $\beta$ and $\gamma$ that produce the lowest model MSE loss are then used once training is complete.
+
+> This algorithm is considerably less efficient than `SIR.train()`; however, if other algorithms fail to converge, this algorithm can be more reliable due to its complete exploration of possible values.
