@@ -4,7 +4,7 @@ This repository contains a collection of data models with simple and consistent 
 
 ## Installation
 
-This repository was primary written in 3.11.3; compatibility with 3.x versions can be assumed.
+This repository was primarily written in 3.11.3; compatibility with 3.x versions can be assumed.
 This repository has the following dependencies:
 - math
 - numpy (`pip install numpy` to install)
