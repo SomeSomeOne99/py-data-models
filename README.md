@@ -6,10 +6,45 @@ This repository contains a collection of data models with simple and consistent 
 
 This repository was primarily written in 3.11.3; compatibility with 3.x versions can be assumed.
 This repository has the following dependencies:
-- math
+- math (standard Python library)
 - numpy (`pip install numpy` to install)
 
-All models also require the `base_model.py` to inherit the base `Model` class, and `LinearRegression` additionally requires the `matrix.py` file to be accessible.
+All models also require the `base_model.py` to inherit the base `Model` class, and some models additionally require the `matrix.py` file to be accessible.
+
+## Usage
+
+To use a model, import the model file. Initialise a model by creating an object using the desired model class.`sirMoel = SIR()`
+
+1. Import model class from file (e.g. `from sir import SIR`)
+2. Initialise model by instantiating an object with the desired model class (e.g. `sirModel = SIR()`)
+3. Either:
+   a. Externally set the model parameters (e.g. `sirModel.infRate = 0.5`)
+   b. Execute model training with a set of inputs and desired outputs (e.g. `sirModel.train(inputs, targets)`)
+4. Execute model prediction for a given input (e.g. `sirModel.predict(100)`)
+
+### Full example
+
+```
+from sir import SIR # Import model class
+
+sirModel = SIR(0.25, 0.1) # Initialise model and set parameters
+print(sirModel.predict(25)) # Output model prediction for t = 25
+
+targetModel = SIR(0.3, 0.7) # Create target model to replicate
+inputs = [x for x in range(100)] # Create inputs for target model and training
+targets = [targetModel.predict(x) for x in inputs] # Get target outputs from target model
+sirModel.train(inputs, targets) # Train model with target outputs
+print(sirModel.predict(50)) # Output model prediction for t = 50
+```
+
+Expected output:
+
+```
+[0.21004359203895354, 0.22565797639309043, 0.564298431567956] # t = 25, infRate = 0.25, recRate = 0.1
+[0.8386886949115978, 1.8308298239615008e-14, 0.16131130508838373] # t = 50, infRate = ~0.3, recRate = ~0.7
+```
+
+> Additional input may be created with importing a model file; this is model testing output and can be ignored.
 
 ## `Model` structure
 
