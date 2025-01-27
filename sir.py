@@ -2,7 +2,7 @@ from base_model import Model # Import base Model class
 class SIR(Model):
     def __init__(self, infRate = None, recRate = None): # (infection rate, recovery rate) No initial weights by default
         self.infRate, self.recRate = infRate, recRate # Set initial weights if given
-    def train(self, x, y, iterationLimit = 10000): # Train model weights on given data with gradient descent
+    def train(self, x, y, iterationLimit = 1000): # Train model weights on given data with gradient descent (correct to ~2sf)
         # Input type checks
         if type(x) != list or type(y) != list:
             raise TypeError("Data must be a list") # Invalid data type
@@ -12,18 +12,34 @@ class SIR(Model):
             raise ValueError("Data must have two or more items")
         # Train infRate with S and I data
         self.infRate = 0.25 # Arbitrary initialisation
-        self.recRate = 0.3 # Arbitrary initialisation
+        self.recRate = 0.25
+        for _ in range(iterationLimit): # Continue until iteration limit reached
+            self.infRate -= sum([(y[i - 1][0] * y[i - 1][1] * ((y[i][0] - self.predict(x[i])[0]) + (y[i][1] - self.predict(x[i])[1]))) for i in range(1, len(x))]) # Use gradient descent to minimise loss with S and I data
+        # Train recRate with I and R data
+        for _ in range(iterationLimit): # Continue until iteration limit reached
+            self.recRate -= sum([(y[i - 1][1] * y[i - 1][2] * ((y[i][1] - self.predict(x[i])[1]) + (y[i][2] - self.predict(x[i])[2]))) for i in range(1, len(x))]) # Use gradient descent to minimise loss with I and R data
+    def train_(self, x, y, iterationLimit = 1000): # Gradient descent with use of best parameter tracking (may be less accurate than train())
+        # Input type checks
+        if type(x) != list or type(y) != list:
+            raise TypeError("Data must be a list") # Invalid data type
+        if len(x) != len(y):
+            raise ValueError("Data lists must be same length") # Data length mismatch
+        if len(x) < 2:
+            raise ValueError("Data must have two or more items")
+        # Train infRate with S and I data
+        self.infRate = 0.25 # Arbitrary initialisation
+        self.recRate = 0.25
         minLoss = sum([sum([(y[i][j] - predY)**2 for j, predY in enumerate(self.predict(x[i])[:2])]) for i in range(len(x))]) # Initial loss for S and I data
         bestInfRate = self.infRate
         for _ in range(iterationLimit): # Continue until iteration limit reached
             loss = sum([sum([(y[i][j] - predY)**2 for j, predY in enumerate(self.predict(x[i])[:2])]) for i in range(len(x))]) # New MSE loss
             if loss == 0: # Perfect loss
                 return
-            self.infRate -= sum([(y[i - 1][0] * y[i - 1][1] * (y[i][0] - self.predict(x[i])[0]) * (y[i][1] - self.predict(x[i])[1])) for i in range(1, len(x))]) # Use gradient descent to minimise loss with S and I data
+            self.infRate -= sum([(y[i - 1][0] * y[i - 1][1] * ((y[i][0] - self.predict(x[i])[0]) + (y[i][1] - self.predict(x[i])[1]))) for i in range(1, len(x))]) # Use gradient descent to minimise loss with S and I data
             if loss < minLoss:
                 minLoss = loss
                 bestInfRate = self.infRate # Preserve best infRate
-        self.infRate = bestInfRate # Use best known infRate
+        self.infRate = bestInfRate # Use best known infRate # MAY REDUCE ACCURACY
         # Train recRate with I and R data
         minLoss = sum([sum([(y[i][j] - predY)**2 for j, predY in enumerate(self.predict(x[i])[1:])]) for i in range(len(x))]) # Initial loss for I and R data
         bestRecRate = self.recRate
@@ -31,11 +47,11 @@ class SIR(Model):
             loss = sum([sum([(y[i][j] - predY)**2 for j, predY in enumerate(self.predict(x[i])[1:])]) for i in range(len(x))]) # New MSE loss
             if loss == 0: # Perfect loss
                 return
-            self.recRate -= sum([(y[i - 1][1] * y[i - 1][2] * (y[i][1] - self.predict(x[i])[1]) * (y[i][2] - self.predict(x[i])[2])) for i in range(1, len(x))]) # Use gradient descent to minimise loss with I and R data
+            self.recRate -= sum([(y[i - 1][1] * y[i - 1][2] * ((y[i][1] - self.predict(x[i])[1]) + (y[i][2] - self.predict(x[i])[2]))) for i in range(1, len(x))]) # Use gradient descent to minimise loss with I and R data
             if loss < minLoss:
                 minLoss = loss
                 bestRecRate = self.recRate # Preserve best recRate
-        self.recRate = bestRecRate # Use best known recRate
+        self.recRate = bestRecRate # Use best known recRate # APPEARS TO REDUCE ACCURACY
     def train_naive(self, x, y, initialPrecision = -1, finalPrecision = -15): # Alternative naive iteration algorithm
         # Input type checks
         if type(x) != list or type(y) != list:
@@ -88,7 +104,7 @@ class SIR(Model):
                 currentSIR[2] + ((self.recRate ** step) * currentSIR[1])]
         return currentSIR
 sirModel = SIR()
-targetModel = SIR(0.5, 0.25)
+targetModel = SIR(0.75, 0.5)
 print("train")
 sirModel.train([x for x in range(25)], [targetModel.predict(x) for x in range(25)]) # Train with Newton-Raphson method
 for testX in [0, 10, 100, 1000]:
