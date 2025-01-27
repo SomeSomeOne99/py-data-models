@@ -2,6 +2,7 @@ from base_model import Model # Import base Model class
 class SIR(Model):
     def __init__(self, infRate = None, recRate = None): # (infection rate, recovery rate) No initial weights by default
         self.infRate, self.recRate = infRate, recRate # Set initial weights if given
+        self.savedResults = []
     def train(self, x, y, iterationLimit = 1000, initialInf = 0.1, initialRec = 0): # Train model weights on given data with gradient descent (correct to ~2sf)
         # Input type checks
         if type(x) != list or type(y) != list:
@@ -16,6 +17,7 @@ class SIR(Model):
         for _ in range(iterationLimit): # Continue until iteration limit reached
             self.infRate -= sum([(y[i - 1][0] * y[i - 1][1] * ((y[i][0] - self.predict(x[i], initialInf, initialRec)[0]) + (y[i][1] - self.predict(x[i], initialInf, initialRec)[1]))) for i in range(1, len(x))]) # Use gradient descent to minimise loss with S and I data
             self.recRate -= sum([(y[i - 1][1] * y[i - 1][2] * ((y[i][1] - self.predict(x[i], initialInf, initialRec)[1]) + (y[i][2] - self.predict(x[i], initialInf, initialRec)[2]))) for i in range(1, len(x))]) # Use gradient descent to minimise loss with I and R data
+            self.savedResults = [] # Reset saved values
     def train_(self, x, y, iterationLimit = 1000, initialInf = 0.1, initialRec = 0): # Gradient descent with use of best parameter tracking (may be less accurate than train())
         # Input type checks
         if type(x) != list or type(y) != list:
@@ -34,6 +36,7 @@ class SIR(Model):
             if loss == 0: # Perfect loss
                 return
             self.infRate -= sum([(y[i - 1][0] * y[i - 1][1] * ((y[i][0] - self.predict(x[i], initialInf, initialRec)[0]) + (y[i][1] - self.predict(x[i], initialInf, initialRec)[1]))) for i in range(1, len(x))]) # Use gradient descent to minimise loss with S and I data
+            self.savedResults = [] # Reset saved values
             if loss < minLoss:
                 minLoss = loss
                 bestInfRate = self.infRate # Preserve best infRate
@@ -46,6 +49,7 @@ class SIR(Model):
             if loss == 0: # Perfect loss
                 return
             self.recRate -= sum([(y[i - 1][1] * y[i - 1][2] * ((y[i][1] - self.predict(x[i], initialInf, initialRec)[1]) + (y[i][2] - self.predict(x[i], initialInf, initialRec)[2]))) for i in range(1, len(x))]) # Use gradient descent to minimise loss with I and R data
+            self.savedResults = [] # Reset saved values
             if loss < minLoss:
                 minLoss = loss
                 bestRecRate = self.recRate # Preserve best recRate
@@ -64,15 +68,18 @@ class SIR(Model):
             loss = sum([sum([(y[i][j] - predY)**2 for j, predY in enumerate(self.predict(x[i], initialInf, initialRec))]) for i in range(len(x))]) # Calculate MSE loss (average deemed unnecessary, length division omitted)
             while True:
                 self.infRate += infChange
+                self.savedResults = [] # Reset saved values
                 # Find optimal recRate for current infRate
                 recChange = 10 ** initialPrecision # New increment for recRate
                 while recChange > minChange: # Continue until minimum precision achieved for recRate
                     loss2 = sum([sum([(y[i][j] - predY)**2 for j, predY in enumerate(self.predict(x[i], initialInf, initialRec))]) for i in range(len(x))]) # MSE, loss2 to prevent interference with infRate
                     while True:
                         self.recRate += recChange
+                        self.savedResults = [] # Reset saved values
                         newLoss2 = sum([sum([(y[i][j] - predY)**2 for j, predY in enumerate(self.predict(x[i], initialInf, initialRec))]) for i in range(len(x))]) # MSE, newLoss2 to prevent interference with infRate
                         if newLoss2 >= loss2:
                             self.recRate -= recChange # Reverse change
+                            self.savedResults = [] # Reset saved values
                             recChange *= -1 # Reverse change direction
                             if recChange > 0: # Change is positive after two switches
                                 break # Current precision achieved
@@ -82,27 +89,33 @@ class SIR(Model):
                 newLoss = sum([sum([(y[i][j] - predY)**2 for j, predY in enumerate(self.predict(x[i], initialInf, initialRec))]) for i in range(len(x))]) # New MSE loss after changes
                 if newLoss >= loss:
                     self.infRate -= infChange # Reverse change
+                    self.savedResults = [] # Reset saved values
                     infChange *= -1 # Reverse change direction
                     if infChange > 0: # Change is positive after two switches
                         break # Current precision achieved
                 else:
                     loss = newLoss
             infChange *= 0.1 # Increase increment precision
-    def predict(self, x, initialInf = 0.1, initialRec = 0, step = 1): # Predict output for given input (S, I, R)
+    def predict(self, x, initialInf = 0.1, initialRec = 0): # Predict output for given input (S, I, R)
         if self.infRate is None or self.recRate is None:
             return None # No learned weights
         if type(x) != int and type(x) != float:
             return TypeError("Input must be a numeric value")
         if x < 0:
             return ValueError("Input must be zero or positive")
-        currentSIR = [1 - initialInf - initialRec, initialInf, initialRec] # Initial position
-        for _ in range(1, x, step):
-            currentSIR = [currentSIR[0] - ((self.infRate ** step) * currentSIR[1] * currentSIR[0] / sum(currentSIR)),
-                currentSIR[1] + ((self.infRate ** step) * currentSIR[1] * currentSIR[0] / sum(currentSIR)) - ((self.recRate ** step) * currentSIR[1]),
-                currentSIR[2] + ((self.recRate ** step) * currentSIR[1])]
-        return currentSIR
+        if len(self.savedResults) == 0: # No saved results, start from initial position
+            self.savedResults = [[1 - initialInf - initialRec, initialInf, initialRec]] # Initial position
+        if x >= len(self.savedResults): # Insufficient saved results:
+            for i in range(len(self.savedResults), x + 1): # Generate new results as needed
+                self.savedResults.append([self.savedResults[i - 1][0] - (self.infRate * self.savedResults[i - 1][1] * self.savedResults[i - 1][0]),
+                    self.savedResults[i - 1][1] + (self.infRate * self.savedResults[i - 1][1] * self.savedResults[i - 1][0]) - (self.recRate * self.savedResults[i - 1][1]),
+                    self.savedResults[i - 1][2] + (self.recRate * self.savedResults[i - 1][1])])
+        return self.savedResults[x] # Return requested value
 sirModel = SIR()
 targetModel = SIR(0.75, 0.5)
+print(targetModel.predict(100))
+print(targetModel.predict(100))
+print(targetModel.predict(101))
 print("train")
 sirModel.train([x for x in range(25)], [targetModel.predict(x) for x in range(25)]) # Train with Newton-Raphson method
 for testX in [0, 10, 100, 1000]:
