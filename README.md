@@ -266,7 +266,7 @@ $b_n = b_{n-1} + \frac{1}{2me^a}loss\cdot(\sum_{i=0}^{|\textbf{x}|}(\textbf{x}_i
 
 After each adjustment, if the loss of the overall model has been reduced, the parameter is value is preserved. If the loss stagnates or the iteration limit `iterationLimit` is reached, training exits. After training is complete, the last preserved parameter value is used to minimise loss.
 
-### SIR (Susceptible-Infected-Recovered)
+### SIR (Susceptible-Infected-Recovered) (`SIR`)
 
 #### Model application (`SIR.predict(x)`)
 
