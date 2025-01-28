@@ -26,7 +26,6 @@ All models also require the `base_model.py` to inherit the base `Model` class, a
 
 ## Usage
 
-To use a model, import the model file. Initialise a model by creating an object using the desired model class.`sirMoel = SIR()`
 
 1. Import model class from file (e.g. `from sir import SIR`)
 2. Initialise model by instantiating an object with the desired model class (e.g. `sirModel = SIR()`)
