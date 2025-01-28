@@ -107,9 +107,9 @@ The first point with a non-zero zero input is used to calculate the initial para
 Since the value for the parameter $a$ is assumed to be correct, only the parameter $b$ is optimised by training.
 During each epoch, $b$ is adjusted to minimise the model loss (total MSE across training data) using the Newton-Raphson method, as following:
 
-$loss = \sum_{i=1}^{|\textbf{x}|}(ab^{\textbf{x}_i} - y_i)^2$
+$loss = \sum_{i=0}^{|\textbf{x}|}(ab^{\textbf{x}_i} - y_i)^2$
 
-$b_n = b_{n-1} - \frac{1}{2a}loss\cdot(\sum_{i=1}^{|\textbf{x}|}(\textbf{x}_ib^{\textbf{x}_i - 1}(ab^{\textbf{x}_i} - \textbf{y}_i)))^{-1}$
+$b_n = b_{n-1} - \frac{1}{2a}loss\cdot(\sum_{i=0}^{|\textbf{x}|}(\textbf{x}_ib^{\textbf{x}_i - 1}(ab^{\textbf{x}_i} - \textbf{y}_i)))^{-1}$
 
 - $\textbf{y}$: model outputs
 - $\textbf{x}$: model inputs
@@ -165,11 +165,11 @@ The first provided output is assumed to correspond to an input of 1, so the outp
 
 Both $a$ and $b$ are adjusted during training using the Newton-Raphson method to minimise the loss (total MSE) of the model, as following:
 
-$loss = \sum_{i=1}^{|\textbf{x}|}(ab^{\textbf{x}_i} - y_i)^2$
+$loss = \sum_{i=0}^{|\textbf{x}|}(ab^{\textbf{x}_i} - y_i)^2$
 
-$a_n = a_{n-1} - \frac{1}{2}loss\cdot(\sum_{i=1}^{|\textbf{x}|}((a + b\ln{\textbf{x}_i}) - \textbf{y}_i))^{-1}$
+$a_n = a_{n-1} - \frac{1}{2}loss\cdot(\sum_{i=0}^{|\textbf{x}|}((a + b\ln{\textbf{x}_i}) - \textbf{y}_i))^{-1}$
 
-$b_n = b_{n-1} - \frac{1}{2}loss\cdot(\sum_{i=1}^{|\textbf{x}|}((\ln{x_i}(a + b\ln{\textbf{x}_i}) - \textbf{y}_i)))^{-1}$
+$b_n = b_{n-1} - \frac{1}{2}loss\cdot(\sum_{i=0}^{|\textbf{x}|}((\ln{x_i}(a + b\ln{\textbf{x}_i}) - \textbf{y}_i)))^{-1}$
 
 - $\textbf{y}$: model outputs
 - $\textbf{x}$: model inputs
@@ -205,13 +205,13 @@ Both parameters are initialised to $-1.1$, which is an arbitrary constant that a
 
 The Newton-Raphson method is used to vary both parameters to minimuse the loss (total MSE) of the model:
 
-$loss = \sum_{i=1}^{|\textbf{x}|}(ab^{\textbf{x}_i} - y_i)^2$
+$loss = \sum_{i=0}^{|\textbf{x}|}(ab^{\textbf{x}_i} - y_i)^2$
 
-$m_n = m_{n-1} - \frac{1}{2}loss\cdot(\sum_{i=1}^{|\textbf{x}|}(e^{-a-b\textbf{x}_i}(m(1+e^{a+b\textbf{x}_i})^{-1} - \textbf{y}_i)))^{-1}$
+$m_n = m_{n-1} - \frac{1}{2}loss\cdot(\sum_{i=0}^{|\textbf{x}|}(e^{-a-b\textbf{x}_i}(m(1+e^{a+b\textbf{x}_i})^{-1} - \textbf{y}_i)))^{-1}$
 
-$a_n = a_{n-1} + \frac{1}{2me^a}loss\cdot(\sum_{i=1}^{|\textbf{x}|}(e^{b\textbf{x}_i}(1+e^{a+b\textbf{x}_i})^{-2}(m(1+e^{a+b\textbf{x}_i})^{-1} - \textbf{y}_i)))^{-1}$
+$a_n = a_{n-1} + \frac{1}{2me^a}loss\cdot(\sum_{i=0}^{|\textbf{x}|}(e^{b\textbf{x}_i}(1+e^{a+b\textbf{x}_i})^{-2}(m(1+e^{a+b\textbf{x}_i})^{-1} - \textbf{y}_i)))^{-1}$
 
-$b_n = b_{n-1} + \frac{1}{2me^a}loss\cdot(\sum_{i=1}^{|\textbf{x}|}(\textbf{x}_ie^{b\textbf{x}_i}(1+e^{a+b\textbf{x}_i})^{-2}(m(1+e^{a+b\textbf{x}_i})^{-1} - \textbf{y}_i)))^{-1}$
+$b_n = b_{n-1} + \frac{1}{2me^a}loss\cdot(\sum_{i=0}^{|\textbf{x}|}(\textbf{x}_ie^{b\textbf{x}_i}(1+e^{a+b\textbf{x}_i})^{-2}(m(1+e^{a+b\textbf{x}_i})^{-1} - \textbf{y}_i)))^{-1}$
 
 - $\textbf{y}$: model outputs
 - $\textbf{x}$: model inputs
@@ -254,9 +254,9 @@ An arbitrary constant is used to initialise both $\beta$ (infection rate) and $\
 
 Gradient descent is used to vary both parameters with the following iterative formulae:
 
-$\beta_{n+1} = \beta_{n} - \sum_{i=0}^{|x|}((y_i)_S \cdot (y_i)_I \cdot (((y_i)_S - p(x_i)_S) + ((y_i)_I - p(x_i)_I)))$
+$\beta_{n+1} = \beta_{n} - \sum_{i=0}^{|x|}((y_i)_S \cdot (y_i)_I \cdot ((y_i)_S - p(x_i)_S + (y_i)_I - p(x_i)_I))$
 
-$\gamma_{n+1} = \gamma_{n} - \sum_{i=0}^{|x|}((y_i)_I \cdot (y_i)_R \cdot (((y_i)_I - p(x_i)_I) + ((y_i)_R - p(x_i)_R)))$
+$\gamma_{n+1} = \gamma_{n} - \sum_{i=0}^{|x|}((y_i)_I \cdot (y_i)_R \cdot ((y_i)_I - p(x_i)_I + (y_i)_R - p(x_i)_R))$
 
 - $y_i$: target output at position $i$
 - $x_i$: input at position $i$
