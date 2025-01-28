@@ -2,6 +2,19 @@
 
 This repository contains a collection of data models with simple and consistent implementations, ideal for lightweight and Python-based data modelling.
 
+## Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [`Model` structure](#model-structure)
+- [Model types](#model-types)
+  - [Linear regression](#linear-regression-linearregression)
+  - [Polynomial regression](#polynomial-regression-polynomialregression)
+  - [Exponential regression](#exponential-regression-exponentialregression)
+  - [Logarithmic regression](#logarithmic-regression-logarithmicregression)
+  - [Logistic regression](#logistic-regression-logisticregression)
+  - [SIR (Susceptible-Infected-Recovered)](#sir-susceptible-infected-recovered-sir)
+
 ## Installation
 
 This repository was primarily written in 3.11.3; compatibility with 3.x versions can be assumed.
