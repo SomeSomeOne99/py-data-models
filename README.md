@@ -52,6 +52,7 @@ Every model inheriting the base `Model` class (`base_model.py`) implements a var
 - `___init__`: A constructor that can take a series of parameters to define a specific model
 - `train`: A method that takes a series of inputs and outputs and finds (near-)optimal parameters to model the given data
 - `predict`: A method that takes an input and produces an output as predicted by the current parameters of the model or returns None if a parameter has not been set
+- `loss`: A method that takes a series of target inputs and outputs and returns the MSE loss for the current model parameters
 ## Model types
 ### Linear regression (`LinearRegression`)
 The linear regression model is used to predict a single output variable using one or more input values with linear relationships to the output.
