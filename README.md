@@ -84,6 +84,43 @@ $\textbf{w} = (\textbf{X}^T\textbf{X})^{-1}\textbf{X}^T\textbf{y}$
 
 The matrix-based structure of the model allows for the model weights to be calculated exactly from the input matrix and target output vector.
 
+### Polynomial regression (`PolynomialRegression`)
+
+This model effectively produces a power series, where the output of the model uses the input value raised to a series of powers in order to model relations with higher-order polynomial relationships.
+
+#### Model application (`PolynomialRegression.predict(x)`)
+
+$y = \textbf{p}^T\textbf{w}$
+
+- $y$: model output
+- $x$: model input
+- $\textbf{p}$: vector of $x$ raised to each power between $0$ and $|\textbf{w}|$
+- $\textbf{w}$: model weights vector
+
+Each weight corresponds to an element in $\textbf{p}$, where $\textbf{p}$ is defined as the following: $[x^0, x^1, \dots x^{|\textbf{w}|-2}, x^{|\textbf{w}|-1}]$. This calculation is also analogous to the following power series:
+
+$y = \sum_{i=0}^{|\textbf{w}|}(x^i\textbf{w}_i)$
+
+#### Model training (`PolynomialRegression.train(X, y, maxPower)`)
+
+$\textbf{w} = (\textbf{X}^T\textbf{X})^{-1}\textbf{X}^T\textbf{y}$
+
+- $\textbf{w}$: model weights vector
+- $\textbf{X}$: matrix of powers of inputs
+- $\textbf{y}$: target output vector
+
+The model weights can be calculated directly from the input matrix and vector of target outputs. The input matrix is defined by the following, where $m$ is `maxPower`:
+
+$\textbf{X} = \begin{bmatrix}
+\textbf{x}_0^0 & \textbf{x}_0^1 & \dots & \textbf{x}_0^m \\
+\textbf{x}_1^0 & \textbf{x}_1^1 & \dots & \textbf{x}_1^m \\
+\vdots & \vdots & \ddots & \vdots \\
+\textbf{x}_{|\textbf{x}|-1}^0 & \textbf{x}_{|\textbf{x}|-1}^1 & \dots & \textbf{x}_{|\textbf{x}|-1}^m
+\end{bmatrix}$
+
+> ##### Note on training accuracy
+> The current implementation of model training does not appear to produce useful results, with the weights produced by this method having little apparent correlation to target values. As a result, it is not recommended to use this for model training.
+
 ### Exponential regression (`ExponentialRegression`)
 
 The exponential regression model is used to model a relationship between a single input and single output value, where the rate of increase of the output is proportional to the value of the input.
