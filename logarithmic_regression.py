@@ -7,7 +7,7 @@ class LinearRegression(Model):
         self.a = y[0] # Set weight to first data point
         self.b = y[1] - y[0] / log(x[1]) # Set initial weight value using first value
         bestA, bestB = self.a, self.b
-        loss = sum([(y[i] - self.predict(x[i]))**2 for i in range(len(x))]) / len(x) # Calculate initial MSE loss
+        loss = self.loss(x, y) # Calculate initial MSE loss
         minLoss = float("inf")
         iteration = 0
         while loss > 0 and iteration < iterationLimit and minLoss != loss: # Continue until correct parameter value found, iteration limit reached or model stagnation
@@ -18,7 +18,7 @@ class LinearRegression(Model):
             newA = self.a - loss / (2 * sum([(self.predict(x[i]) - y[i]) for i in range(len(x))])) # Prevent change until all gradients calculated
             self.b -= loss / (2 * sum([(log(x[i]) * (self.predict(x[i]) - y[i])) for i in range(len(x))]))
             self.a = newA
-            loss = sum([(y[i] - self.predict(x[i]))**2 for i in range(len(x))]) / len(x) # Calculate new MSE loss
+            loss = self.loss(x, y) # Calculate new MSE loss
             iteration += 1
         if loss > minLoss:
             self.a, self.b = bestA, bestB

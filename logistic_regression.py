@@ -13,7 +13,7 @@ class LogisticRegression(Model):
         self.m = max(y) if yLimit is None else yLimit # Initially assume that maximum value is limit if no limit given
         self.a = -1.1 # Initialise to arbitrary constants
         self.b = -1.1
-        loss = sum([(y[i] - self.predict(x[i]))**2 for i in range(len(x))]) / len(x) # Calculate initial MSE loss
+        loss = self.loss(x, y) # Calculate initial MSE loss
         minLoss = float("inf")
         minLossM, minLossA, minLossB = self.m, self.a, self.b # Used to revert changes that increase loss
         iteration = 0
@@ -32,7 +32,7 @@ class LogisticRegression(Model):
             bGradient = (-2 * self.m * exp(self.a) * sum([x[i] * (exp(self.b * x[i]) * (1 + exp(self.a + self.b * x[i]))**-2 * (self.predict(x[i]) - y[i])) for i in range(len(x))]))
             if bGradient != 0:
                 self.b -= loss / bGradient
-            loss = sum([(y[i] - self.predict(x[i]))**2 for i in range(len(x))]) / len(x) # Calculate new MSE loss
+            loss = self.loss(x, y) # Calculate new MSE loss
             iteration += 1
         self.m, self.a, self.b = minLossM, minLossA, minLossB # Use best known parameters
     def predict(self, x): # Predict output for given input

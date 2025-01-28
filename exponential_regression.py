@@ -10,7 +10,7 @@ class ExponentialRegression(Model):
             raise ValueError("Data lists must be same length") # Data length mismatch
         self.a = y[0] # Set weight to first data point
         self.b = ((y[0] / x[0]) ** (1 / x[0])) if x[0] != 0 else ((y[1] / x[1]) ** (1 / x[1])) # Set initial weight value using first value
-        loss = sum([(y[i] - self.predict(x[i]))**2 for i in range(len(x))]) / len(x) # Calculate initial MSE loss
+        loss = self.loss(x, y) # Calculate initial MSE loss
         minLoss = float("inf")
         iteration = 0
         while loss > 0 and iteration < iterationLimit: # Continue until correct parameter value found or iteration limit reached
@@ -18,7 +18,7 @@ class ExponentialRegression(Model):
                 minLoss = loss
                 bestB = self.b
             self.b -= loss / (2 * self.a * sum([(x[i] * (self.b ** (x[i] - 1)) * (self.predict(x[i]) - y[i])) for i in range(len(x))])) # Use Newton-Raphson method to iteratively improve parameter
-            loss = sum([(y[i] - self.predict(x[i]))**2 for i in range(len(x))]) / len(x) # Calculate new MSE loss
+            loss = self.loss(x, y) # Calculate new MSE loss
             iteration += 1
         if loss > minLoss:
             self.b = bestB
@@ -34,10 +34,10 @@ class ExponentialRegression(Model):
         minChange = 10 ** finalPrecision # Minimum weight variation for given precision
         while change > minChange: # Continue until minimum precision achieved
             bChange = change
-            loss = sum([(y[i] - self.predict(x[i]))**2 for i in range(len(x))]) / len(x) # Calculate MSE loss
+            loss = self.loss(x, y) # Calculate MSE loss
             while True:
                 self.b += bChange
-                newLoss = sum([(y[i] - self.predict(x[i]))**2 for i in range(len(x))]) / len(x) # Calculate new MSE loss after change
+                newLoss = self.loss(x, y) # Calculate new MSE loss after change
                 if newLoss >= loss:
                     self.b -= bChange # Reverse change
                     bChange *= -1 # Reverse change direction

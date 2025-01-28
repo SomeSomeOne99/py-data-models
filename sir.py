@@ -65,18 +65,18 @@ class SIR(Model):
         infChange = 10 ** initialPrecision # Initial weight increment
         minChange = 10 ** finalPrecision # Minimum weight increment for given precision
         while infChange > minChange: # Continue until minimum precision achieved
-            loss = sum([sum([(y[i][j] - predY)**2 for j, predY in enumerate(self.predict(x[i], initialInf, initialRec))]) for i in range(len(x))]) # Calculate MSE loss (average deemed unnecessary, length division omitted)
+            loss = self.loss(x, y) # Calculate MSE loss (average deemed unnecessary, length division omitted)
             while True:
                 self.infRate += infChange
                 self.savedResults = [] # Reset saved values
                 # Find optimal recRate for current infRate
                 recChange = 10 ** initialPrecision # New increment for recRate
                 while recChange > minChange: # Continue until minimum precision achieved for recRate
-                    loss2 = sum([sum([(y[i][j] - predY)**2 for j, predY in enumerate(self.predict(x[i], initialInf, initialRec))]) for i in range(len(x))]) # MSE, loss2 to prevent interference with infRate
+                    loss2 = self.loss(x, y) # MSE, loss2 to prevent interference with infRate
                     while True:
                         self.recRate += recChange
                         self.savedResults = [] # Reset saved values
-                        newLoss2 = sum([sum([(y[i][j] - predY)**2 for j, predY in enumerate(self.predict(x[i], initialInf, initialRec))]) for i in range(len(x))]) # MSE, newLoss2 to prevent interference with infRate
+                        newLoss2 = self.loss(x, y) # MSE, newLoss2 to prevent interference with infRate
                         if newLoss2 >= loss2:
                             self.recRate -= recChange # Reverse change
                             self.savedResults = [] # Reset saved values
@@ -86,7 +86,7 @@ class SIR(Model):
                         else:
                             loss2 = newLoss2
                     recChange *= 0.1 # Increase increment precision
-                newLoss = sum([sum([(y[i][j] - predY)**2 for j, predY in enumerate(self.predict(x[i], initialInf, initialRec))]) for i in range(len(x))]) # New MSE loss after changes
+                newLoss = self.loss(x, y) # New MSE loss after changes
                 if newLoss >= loss:
                     self.infRate -= infChange # Reverse change
                     self.savedResults = [] # Reset saved values
