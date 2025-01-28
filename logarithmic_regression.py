@@ -26,13 +26,12 @@ class LinearRegression(Model):
         if self.a is None or self.b is None:
             return None # No learned weights
         return self.a + self.b * log(x) # Apply weights to input
-logModel = LinearRegression()
-targetModel = LinearRegression(2, 4)
-logModel.train([x for x in range(1, 20)], [targetModel.predict(x) for x in range(1, 20)])
-print(logModel.predict(1), "->", targetModel.predict(1))
-print(logModel.predict(5), "->", targetModel.predict(5))
-print(logModel.predict(10), "->", targetModel.predict(10))
-print(logModel.predict(20), "->", targetModel.predict(20))
-print("a", logModel.a, "->", targetModel.a)
-print("b", logModel.b, "->", targetModel.b)
-print(logModel.loss([x for x in range(1, 20)], [targetModel.predict(x) for x in range(1, 20)]))
+def example_train():
+    logModel = LinearRegression()
+    targetModel = LinearRegression(2, 4)
+    logModel.train([x for x in range(1, 20)], [targetModel.predict(x) for x in range(1, 20)])
+    for x in [1, 5, 10, 20]:
+        print(x, ":", logModel.predict(x), "->", targetModel.predict(x))
+    print("a", logModel.a, "->", targetModel.a)
+    print("b", logModel.b, "->", targetModel.b)
+    print(logModel.loss([x for x in range(1, 20)], [targetModel.predict(x) for x in range(1, 20)]))

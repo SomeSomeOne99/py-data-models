@@ -50,19 +50,21 @@ class ExponentialRegression(Model):
         if self.a is None or self.b is None:
             return None # No learned weights
         return self.a * (self.b ** input) # y = a b^x
-expModel = ExponentialRegression()
-targetModel = ExponentialRegression(2, -3)
-print("train")
-expModel.train([x for x in range(30)], [targetModel.predict(x) for x in range(30)]) # Train with Newton-Raphson method
-for x in [0, 1, 15, 30, 40]:
-    print(x, ":", expModel.predict(x), "->", targetModel.predict(x))
-print("a", ":", expModel.a, "->", targetModel.a)
-print("b", ":", expModel.b, "->", targetModel.b)
-print("loss:", expModel.loss([x for x in range(30)], [targetModel.predict(x) for x in range(30)]))
-print("train_naive")
-expModel.train_naive([x for x in range(15)], [targetModel.predict(x) for x in range(15)]) # Train with naive iterative method (clears past learning)
-for x in [0, 1, 15, 30, 40]:
-    print(x, ":", expModel.predict(x), "->", targetModel.predict(x))
-print("a", ":", expModel.a, "->", targetModel.a)
-print("b", ":", expModel.b, "->", targetModel.b)
-print("loss:", expModel.loss([x for x in range(15)], [targetModel.predict(x) for x in range(15)]))
+def example_train():
+    expModel = ExponentialRegression()
+    targetModel = ExponentialRegression(2, -3)
+    expModel.train([x for x in range(30)], [targetModel.predict(x) for x in range(30)]) # Train with Newton-Raphson method
+    for x in [0, 1, 15, 30, 40]:
+        print(x, ":", expModel.predict(x), "->", targetModel.predict(x))
+    print("a", ":", expModel.a, "->", targetModel.a)
+    print("b", ":", expModel.b, "->", targetModel.b)
+    print("loss:", expModel.loss([x for x in range(30)], [targetModel.predict(x) for x in range(30)]))
+def example_train_naive():
+    expModel = ExponentialRegression()
+    targetModel = ExponentialRegression(2, -3)
+    expModel.train_naive([x for x in range(15)], [targetModel.predict(x) for x in range(15)]) # Train with naive iterative method (clears past learning)
+    for x in [0, 1, 15, 30, 40]:
+        print(x, ":", expModel.predict(x), "->", targetModel.predict(x))
+    print("a", ":", expModel.a, "->", targetModel.a)
+    print("b", ":", expModel.b, "->", targetModel.b)
+    print("loss:", expModel.loss([x for x in range(15)], [targetModel.predict(x) for x in range(15)]))

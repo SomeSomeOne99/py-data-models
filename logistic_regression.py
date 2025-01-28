@@ -39,17 +39,13 @@ class LogisticRegression(Model):
         if self.m is None or self.a is None or self.b is None:
             return None # No learned weights
         return self.m / (1 + exp(self.a + self.b * x)) # y = m / (1 + e^(a + bx))
-expModel = LogisticRegression()
-targetModel = LogisticRegression(1, 5, -1) # Used to generate data to train model with
-expModel.train([a for a in range(-30, 30)], [targetModel.predict(a) for a in range(-30, 30)], 1) # Train with Newton-Raphson method
-print("-30", expModel.predict(-30), "->", targetModel.predict(-30)) # Display model results with comparison to target model
-print("-15", expModel.predict(-15), "->", targetModel.predict(-15))
-print("-1", expModel.predict(-1), "->", targetModel.predict(-1))
-print("0", expModel.predict(0), "->", targetModel.predict(0))
-print("1", expModel.predict(1), "->", targetModel.predict(1))
-print("15", expModel.predict(15), "->", targetModel.predict(15))
-print("30", expModel.predict(30), "->", targetModel.predict(30))
-print("m", expModel.m, "->", targetModel.m)
-print("a", expModel.a, "->", targetModel.a)
-print("b", expModel.b, "->", targetModel.b)
-print(expModel.loss([a for a in range(-30, 30)], [targetModel.predict(a) for a in range(-30, 30)]))
+def example_train():
+    expModel = LogisticRegression()
+    targetModel = LogisticRegression(1, 5, -1) # Used to generate data to train model with
+    expModel.train([a for a in range(-30, 30)], [targetModel.predict(a) for a in range(-30, 30)], 1) # Train with Newton-Raphson method
+    for x in [-30, -15, -1, 0, 1, 1, 15, 30]:
+        print(x, ":", expModel.predict(x), "->", targetModel.predict(x)) # Display model results with comparison to target model
+    print("m", expModel.m, "->", targetModel.m)
+    print("a", expModel.a, "->", targetModel.a)
+    print("b", expModel.b, "->", targetModel.b)
+    print(expModel.loss([a for a in range(-30, 30)], [targetModel.predict(a) for a in range(-30, 30)]))

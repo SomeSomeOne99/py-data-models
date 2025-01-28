@@ -113,22 +113,21 @@ class SIR(Model):
         return self.savedResults[x] # Return requested value
     def loss(self, x, y):
         return sum([sum([(y[i][j] - pred)**2 for j, pred in enumerate(self.predict(x[i]))]) for i in range(len(x))]) / len(x * 3)
-sirModel = SIR()
-targetModel = SIR(0.75, 0.5)
-print(targetModel.predict(100))
-print(targetModel.predict(100))
-print(targetModel.predict(101))
-print("train")
-sirModel.train([x for x in range(25)], [targetModel.predict(x) for x in range(25)]) # Train with Newton-Raphson method
-for testX in [0, 10, 100, 1000]:
-    print(sirModel.predict(testX), "->", targetModel.predict(testX)) # Predict for given inputs
-print(sirModel.infRate, "->", targetModel.infRate)
-print(sirModel.recRate, "->", targetModel.recRate)
-print("loss", sirModel.loss([x for x in range(25)], [targetModel.predict(x) for x in range(25)]))
-print("train_naive")
-sirModel.train_naive([x for x in range(100)], [targetModel.predict(x) for x in range(100)]) # Train with naive iterative method (clears past learning)
-for testX in [0, 10, 100, 1000]:
-    print(sirModel.predict(testX), "->", targetModel.predict(testX)) # Predict for given inputs
-print(sirModel.infRate, "->", targetModel.infRate)
-print(sirModel.recRate, "->", targetModel.recRate)
-print("loss", sirModel.loss([x for x in range(100)], [targetModel.predict(x) for x in range(100)]))
+def example_train():
+    sirModel = SIR()
+    targetModel = SIR(0.75, 0.5)
+    sirModel.train([x for x in range(25)], [targetModel.predict(x) for x in range(25)]) # Train with Newton-Raphson method
+    for x in [0, 10, 100, 1000]:
+        print(x, ":", sirModel.predict(x), "->", targetModel.predict(x)) # Predict for given inputs
+    print("infRate", sirModel.infRate, "->", targetModel.infRate)
+    print("recRate", sirModel.recRate, "->", targetModel.recRate)
+    print("loss", sirModel.loss([x for x in range(25)], [targetModel.predict(x) for x in range(25)]))
+def example_train_naive():
+    sirModel = SIR()
+    targetModel = SIR(0.75, 0.5)
+    sirModel.train_naive([x for x in range(100)], [targetModel.predict(x) for x in range(100)]) # Train with naive iterative method (clears past learning)
+    for x in [0, 10, 100, 1000]:
+        print(x, ":", sirModel.predict(x), "->", targetModel.predict(x)) # Predict for given inputs
+    print("infRate", sirModel.infRate, "->", targetModel.infRate)
+    print("recRate", sirModel.recRate, "->", targetModel.recRate)
+    print("loss", sirModel.loss([x for x in range(100)], [targetModel.predict(x) for x in range(100)]))

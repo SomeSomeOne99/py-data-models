@@ -16,9 +16,11 @@ class PolynomialRegression(Model):
         return Matrix([x**p for p in range(len(self.w))]) @ self.w # Apply weights to input
     def loss(self, x, y):
         return sum([sum([(y[i][j] - pred)**2 for j, pred in enumerate(self.predict(x[i]).data)]) / len(y[i]) for i in range(len(x))]) / len(x)
-polyModel = PolynomialRegression()
-targetModel = PolynomialRegression(Matrix([0, 1]))
-polyModel.train([x for x in range(10)], Matrix([x**2 for x in range(10)]), maxPower = 10)
-print(polyModel.predict(5))
-print(polyModel.w.data)
-print(polyModel.loss([x for x in range(10)], [[x**2] for x in range(10)]))
+def example_train():
+    polyModel = PolynomialRegression()
+    targetModel = PolynomialRegression(Matrix([0, 2, 1, 3]))
+    polyModel.train([x for x in range(10)], Matrix([x**2 for x in range(10)]), maxPower = 10)
+    for x in [0, 5, 10]:
+        print(polyModel.predict(x), "->", targetModel.predict(x))
+    print("w", polyModel.w.data, "->", targetModel.w.data)
+    print("loss", polyModel.loss([x for x in range(10)], [[x**2] for x in range(10)]))
