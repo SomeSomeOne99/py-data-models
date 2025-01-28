@@ -111,6 +111,8 @@ class SIR(Model):
                     self.savedResults[i - 1][1] + (self.infRate * self.savedResults[i - 1][1] * self.savedResults[i - 1][0]) - (self.recRate * self.savedResults[i - 1][1]),
                     self.savedResults[i - 1][2] + (self.recRate * self.savedResults[i - 1][1])])
         return self.savedResults[x] # Return requested value
+    def loss(self, x, y):
+        return sum([sum([(y[i][j] - pred)**2 for j, pred in enumerate(self.predict(x[i]))]) for i in range(len(x))]) / len(x * 3)
 sirModel = SIR()
 targetModel = SIR(0.75, 0.5)
 print(targetModel.predict(100))
@@ -122,9 +124,11 @@ for testX in [0, 10, 100, 1000]:
     print(sirModel.predict(testX), "->", targetModel.predict(testX)) # Predict for given inputs
 print(sirModel.infRate, "->", targetModel.infRate)
 print(sirModel.recRate, "->", targetModel.recRate)
+print("loss", sirModel.loss([x for x in range(25)], [targetModel.predict(x) for x in range(25)]))
 print("train_naive")
 sirModel.train_naive([x for x in range(100)], [targetModel.predict(x) for x in range(100)]) # Train with naive iterative method (clears past learning)
 for testX in [0, 10, 100, 1000]:
     print(sirModel.predict(testX), "->", targetModel.predict(testX)) # Predict for given inputs
 print(sirModel.infRate, "->", targetModel.infRate)
 print(sirModel.recRate, "->", targetModel.recRate)
+print("loss", sirModel.loss([x for x in range(100)], [targetModel.predict(x) for x in range(100)]))

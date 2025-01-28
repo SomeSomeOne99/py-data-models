@@ -9,6 +9,9 @@ class LinearRegression(Model):
         if self.w is None:
             return None # No learned weights
         return input @ self.w # Apply weights to input
+    def loss(self, x, y):
+        return sum([sum([(y[i][j] - pred)**2 for j, pred in enumerate(self.predict(x[i]).data)]) / len(y[i]) for i in range(len(x))]) / len(x)
 linModel = LinearRegression()
 linModel.train(Matrix([[1, 2], [3, 4]]), Matrix([[3], [7]]))
 print(linModel.predict(Matrix([[10, 20]])))
+print(linModel.loss([Matrix([1, 2]), Matrix([3, 4])], [[3], [7]]))

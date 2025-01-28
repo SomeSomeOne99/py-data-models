@@ -58,9 +58,11 @@ for x in [0, 1, 15, 30, 40]:
     print(x, ":", expModel.predict(x), "->", targetModel.predict(x))
 print("a", ":", expModel.a, "->", targetModel.a)
 print("b", ":", expModel.b, "->", targetModel.b)
+print("loss:", expModel.loss([x for x in range(30)], [targetModel.predict(x) for x in range(30)]))
 print("train_naive")
 expModel.train_naive([x for x in range(15)], [targetModel.predict(x) for x in range(15)]) # Train with naive iterative method (clears past learning)
 for x in [0, 1, 15, 30, 40]:
     print(x, ":", expModel.predict(x), "->", targetModel.predict(x))
 print("a", ":", expModel.a, "->", targetModel.a)
 print("b", ":", expModel.b, "->", targetModel.b)
+print("loss:", expModel.loss([x for x in range(15)], [targetModel.predict(x) for x in range(15)]))
