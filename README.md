@@ -17,7 +17,7 @@ To use a model, import the model file. Initialise a model by creating an object 
 
 1. Import model class from file (e.g. `from sir import SIR`)
 2. Initialise model by instantiating an object with the desired model class (e.g. `sirModel = SIR()`)
-3. Either:
+3. Set model parameters with either of the following:
    a. Externally set the model parameters (e.g. `sirModel.infRate = 0.5`)
    b. Execute model training with a set of inputs and desired outputs (e.g. `sirModel.train(inputs, targets)`)
 4. Execute model prediction for a given input (e.g. `sirModel.predict(100)`)
@@ -47,13 +47,23 @@ Expected output:
 ## `Model` structure
 
 Every model inheriting the base `Model` class (`base_model.py`) implements a variation of these methods:
-- `___init__`: A constructor that can take a series of parameters to define a specific model
-- `train`: A method that takes a series of inputs and outputs and finds (near-)optimal parameters to model the given data
-- `predict`: A method that takes an input and produces an output as predicted by the current parameters of the model or returns None if a parameter has not been set
-- `loss`: A method that takes a series of target inputs and outputs and returns the MSE loss for the current model parameters
+
+- `___init__()`: A constructor that can take a series of parameters to define a specific model
+- `train(x, y)`: A method that takes a series of inputs and outputs and finds (near-)optimal parameters to model the given data
+- `predict(x)`: A method that takes an input and produces an output as predicted by the current parameters of the model or returns None if a parameter has not been set
+- `loss(x, y)`: A method that takes a series of target inputs and outputs and returns the MSE loss for the current model parameters
+
+Some models also implement the following methods:
+
+- `train_(x, y)`: An alternative training method that may produce different and, in limited cases, more accurate results than `train`
+- `train_naive(x, y)`: A naive training method that produces accurate results but is considerably less efficient than other algorithms
+
 ## Model types
+
 ### Linear regression (`LinearRegression`)
+
 The linear regression model is used to predict a single output variable using one or more input values with linear relationships to the output.
+
 #### Model application (`LinearRegression.predict(x)`)
 
 $y = \textbf{x}^T\textbf{w}$
@@ -63,6 +73,7 @@ $y = \textbf{x}^T\textbf{w}$
 - $\textbf{w}$: model weights vector
 
 Each weight in the weights vector corresponds to and scales an input in the inputs vector, allowing for the implementation of linear relationships.
+
 #### Model training (`LinearRegression.train(X, y)`)
 
 $\textbf{w} = (\textbf{X}^T\textbf{X})^{-1}\textbf{X}^T\textbf{y}$
