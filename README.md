@@ -44,8 +44,6 @@ Expected output:
 [0.8386886949115978, 1.8308298239615008e-14, 0.16131130508838373] # t = 50, infRate = ~0.3, recRate = ~0.7
 ```
 
-> Additional input may be created with importing a model file; this is model testing output and can be ignored.
-
 ## `Model` structure
 
 Every model inheriting the base `Model` class (`base_model.py`) implements a variation of these methods:
