@@ -72,8 +72,8 @@ Some models also implement the following methods:
 
 Each model file also includes some short training and testing examples within the following functions:
 
-- `example_train`: Train using `.train()`, output a series of example testing values and model loss compared to the target model
-- `example_train_naive`: Train using `.train_naive()`, output a series of example testing values and model loss compared to the target model
+- `example_train()`: Train using `.train()`, output a series of example testing values and model loss compared to the target model
+- `example_train_naive()`: Train using `.train_naive()`, output a series of example testing values and model loss compared to the target model
 
 ## Model types
 
