@@ -61,8 +61,8 @@ Expected output:
 Every model inheriting the base `Model` class (`base_model.py`) implements a variation of these methods:
 
 - `___init__()`: A constructor that can take a series of parameters to define a specific model
-- `train(x, y)`: A method that takes a series of inputs and outputs and finds (near-)optimal parameters to model the given data
-- `predict(x)`: A method that takes an input and produces an output as predicted by the current parameters of the model or returns None if a parameter has not been set
+- `train(x, y)`: A method that takes a series of inputs and outputs and finds near-optimal parameters to model the given data
+- `predict(x)`: A method that takes an input and produces an output as predicted by the current parameters of the model or returns `None` if a parameter has not been set
 - `loss(x, y)`: A method that takes a series of target inputs and outputs and returns the MSE loss for the current model parameters
 
 Some models also implement the following methods:
@@ -86,8 +86,8 @@ The linear regression model is used to predict a single output variable using on
 $y = \textbf{x}^T\textbf{w}$
 
 - $y$: model output
-- $\textbf{x}$: model inputs vector
-- $\textbf{w}$: model weights vector
+- $\textbf{x}$: vector of model inputs
+- $\textbf{w}$: vector of model weights
 
 Each weight in the weights vector corresponds to and scales an input in the inputs vector, allowing for the implementation of linear relationships.
 
@@ -95,9 +95,9 @@ Each weight in the weights vector corresponds to and scales an input in the inpu
 
 $\textbf{w} = (\textbf{X}^T\textbf{X})^{-1}\textbf{X}^T\textbf{y}$
 
-- $\textbf{w}$: model weights vector
-- $\textbf{X}$: provided input matrix
-- $\textbf{y}$: target output vector
+- $\textbf{w}$: vector of model weights
+- $\textbf{X}$: matrix of provided inputs
+- $\textbf{y}$: vector of target outputs
 
 The matrix-based structure of the model allows for the model weights to be calculated exactly from the input matrix and target output vector.
 
@@ -112,7 +112,7 @@ $y = \textbf{p}^T\textbf{w}$
 - $y$: model output
 - $x$: model input
 - $\textbf{p}$: vector of $x$ raised to each power between $0$ and $|\textbf{w}|$
-- $\textbf{w}$: model weights vector
+- $\textbf{w}$: vector of model weights
 
 Each weight corresponds to an element in $\textbf{p}$, where $\textbf{p}$ is defined as the following: $[x^0, x^1, \dots x^{|\textbf{w}|-2}, x^{|\textbf{w}|-1}]$. This calculation is also analogous to the following power series:
 
@@ -122,9 +122,9 @@ $y = \sum_{i=0}^{|\textbf{w}|}(x^i\textbf{w}_i)$
 
 $\textbf{w} = (\textbf{X}^T\textbf{X})^{-1}\textbf{X}^T\textbf{y}$
 
-- $\textbf{w}$: model weights vector
+- $\textbf{w}$: vector of model weights
 - $\textbf{X}$: matrix of powers of inputs
-- $\textbf{y}$: target output vector
+- $\textbf{y}$: vector of target outputs
 
 The model weights can be calculated directly from the input matrix and vector of target outputs. The input matrix is defined by the following, where $m$ is `maxPower`:
 
@@ -264,14 +264,14 @@ $b = \frac{\ln(y_\beta^{-1} - 1) - a}{x_\beta}$
 - $a, b$: model parameters
 - $x_\alpha$: closest value in $x$ to $0$ (lowest modulus value)
 - $y_\alpha$: target value for input $x_\alpha$
-- $x_\beta$ is the further value in $x$ from $0$ (greatest modulus value)
+- $x_\beta$: furthest value in $x$ from $0$ (greatest modulus value)
 - $y_\beta$: target value for input $x_\beta$
 
 Both parameters are initially approximated using the values $y_\alpha$, $x_\beta$ and $y_\beta$, where each is defined as above. The value $x_\alpha$ has minimal contribution to $y_\alpha$, allowing the value to be approximated as $0$, so the term $bx$ in the model can be ignored and $a$ can be inexpensively approximated. Conversely, $x_\beta$ has maximal contribution to $y_\beta$, allowing the approximated value for $b$ to be more accurate.
 
 ##### Parameter optimisation
 
-The Newton-Raphson method is used to vary both parameters to minimuse the loss (total MSE) of the model:
+The Newton-Raphson method is used to vary both parameters to minimise the loss (total MSE) of the model:
 
 $loss = \sum_{i=0}^{|\textbf{x}|}(ab^{\textbf{x}_i} - y_i)^2$
 
@@ -295,7 +295,7 @@ The SIR model can be used to model the spread of a disease or similar processes,
 
 $\frac{dS}{dt} = -\beta S I$
 
-After each timestep, the susceptible population decreases by a change proportional to the infection rate $\beta$, the current susceptible population and the infected population. Generally, as $t \to \infty$, $S \to 0$, as all susceptible individuals become infected.
+After each timestep, the susceptible population decreases proportionally to the infection rate $\beta$, the current susceptible population and the infected population. Generally, as $t \to \infty$, $S \to 0$, as all susceptible individuals become infected.
 
 $\frac{dI}{dt} = \beta S I - \gamma I$
 
