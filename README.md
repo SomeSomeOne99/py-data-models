@@ -289,6 +289,8 @@ After each adjustment, if the loss of the overall model has been reduced, the pa
 
 ### SIR (Susceptible-Infected-Recovered) (`SIR`)
 
+The SIR model can be used to model the spread of a disease or similar processes, where individuals in a population are one of the following: susceptible (which can become infected), infected (which can become recovered) or recovered (which remain recovered). The transitions between these states is governed by the values $\beta$ (the infection rate) and $\gamma$  (the recovery rate). The population is modelled as having a total value of 1, with each state being represented by a fraction, such as in [0.25, 0.6, 0.15], where 25% of the population is susceptible, 60% are infected and 15% are recovered.
+
 #### Model application (`SIR.predict(x)`)
 
 $\frac{dS}{dt} = -\beta S I$
