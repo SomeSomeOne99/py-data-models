@@ -257,13 +257,13 @@ The model output is within the range $(0,1)$, with large positive or negative in
 
 ##### Parameter initialisation
 
-$a = -1.1$
+$a = \ln(y_\alpha^{-1} - 1)$ where $x_\alpha$ is the closest value in $x$ to $0$ (lowest modulus value)
 
-$b = -1.1$
+$b = \frac{\ln(y_\beta^{-1} - 1) - a}{x_\beta}$ where $x_\beta$ is the further value in $x$ from $0$ (greatest modulus value)
 
 - $a, b$: model parameters
 
-Both parameters are initialised to $-1.1$, which is an arbitrary constant that allows for training to optimise the values. While this will initially produce a considerably sub-optimal model, after a large number of training epochs, the impact of this arbitrary initialisation is minimal.
+Both parameters are initially approximated using the values $y_\alpha$, $x_\beta$ and $y_\beta$, where each is defined as above. The value $x_\alpha$ has minimal contribution to $y_\alpha$, allowing the value to be approximated as $0$, so the term $bx$ in the model can be ignored and $a$ can be inexpensively approximated. Conversely, $x_\beta$ has maximal contribution to $y_\beta$, allowing the approximated value for $b$ to be more accurate.
 
 ##### Parameter optimisation
 
