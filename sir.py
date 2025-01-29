@@ -12,7 +12,7 @@ class SIR(Model):
         if len(x) < 2:
             raise ValueError("Data must have two or more items")
         # Train infRate with S and I data
-        self.infRate = (y[1][0] - y[2][0]) / (y[1][1] * y[1][0]) # Estimate initial parameters
+        self.infRate = (y[1][0] - y[2][0]) / (y[1][0] * y[1][1]) # Estimate initial parameters
         self.recRate = (y[2][2] - y[1][2]) / y[1][1]
         for _ in range(iterationLimit): # Continue until iteration limit reached
             self.infRate -= sum([(y[i - 1][0] * y[i - 1][1] * ((y[i][0] - self.predict(x[i], initialInf, initialRec)[0]) + (y[i][1] - self.predict(x[i], initialInf, initialRec)[1]))) for i in range(1, len(x))]) # Use gradient descent to minimise loss with S and I data
