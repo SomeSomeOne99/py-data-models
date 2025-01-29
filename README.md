@@ -257,11 +257,15 @@ The model output is within the range $(0,1)$, with large positive or negative in
 
 ##### Parameter initialisation
 
-$a = \ln(y_\alpha^{-1} - 1)$ where $x_\alpha$ is the closest value in $x$ to $0$ (lowest modulus value)
+$a = \ln(y_\alpha^{-1} - 1)$
 
-$b = \frac{\ln(y_\beta^{-1} - 1) - a}{x_\beta}$ where $x_\beta$ is the further value in $x$ from $0$ (greatest modulus value)
+$b = \frac{\ln(y_\beta^{-1} - 1) - a}{x_\beta}$
 
 - $a, b$: model parameters
+- $x_\alpha$: closest value in $x$ to $0$ (lowest modulus value)
+- $y_\alpha$: target value for input $x_\alpha$
+- $x_\beta$ is the further value in $x$ from $0$ (greatest modulus value)
+- $y_\beta$: target value for input $x_\beta$
 
 Both parameters are initially approximated using the values $y_\alpha$, $x_\beta$ and $y_\beta$, where each is defined as above. The value $x_\alpha$ has minimal contribution to $y_\alpha$, allowing the value to be approximated as $0$, so the term $bx$ in the model can be ignored and $a$ can be inexpensively approximated. Conversely, $x_\beta$ has maximal contribution to $y_\beta$, allowing the approximated value for $b$ to be more accurate.
 
