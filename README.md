@@ -306,13 +306,13 @@ The rate of increase in the recovered population is equal to the decrease in the
 
 ##### Parameter initialisation
 
-$\beta = 0.1$
+$\beta = \frac{(y_1)_S - (y_2)_S}{(y_1)_S \cdot (y_1)_I}$
 
-$\gamma = 0.1$
+$\gamma = \frac{(y_2)_R - (y_1)_R}{(y_1)_I}$
 
 - $\beta, \gamma$: model parameters
 
-An arbitrary constant is used to initialise both $\beta$ (infection rate) and $\gamma$ (recovery rate), as the effect of any initialisaton on training accuracy quickly becomes negligible.
+Both parameters are estimated with the second and third target points to prevent division by zero, since the initial values for infected, $(y_0)_I$, and recovered, $(y_0)_R$, individuals are likely to be zero.
 
 ##### Standard gradient descent (`SIR.train(x, y, iterationLimit, initialInf, initialRec)`)
 
