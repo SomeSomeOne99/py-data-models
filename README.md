@@ -159,7 +159,7 @@ $y = ab^x$
 
 As the input value increases, the rate of change of the output increases, producing an exponential relationship.
 
-#### Model training (`ExponentialRegression.train(x, y, iterationLimit)`)
+#### Model training
 
 ##### Parameter initialisation
 
@@ -173,7 +173,7 @@ $b = (\frac{y_0}{x_0})^{x_0^{-1}}, x_0 \neq 0; (\frac{y_1}{x_1})^{x_1^{-1}}, oth
 
 The first point with a non-zero zero input is used to calculate the initial parameters. The first input is assumed as 0 to generate the initial value for a, which is unchanged by later training.
 
-##### Parameter optimisation
+##### Newton-Raphson parameter optimisation (`ExponentialRegression.train(x, y, iterationLimit)`)
 
 Since the value for the parameter $a$ is assumed to be correct, only the parameter $b$ is optimised by training.
 During each epoch, $b$ is adjusted to minimise the model loss (total MSE across training data) using the Newton-Raphson method, as following:
@@ -188,21 +188,7 @@ $b_n = b_{n-1} - \frac{1}{2a}loss\cdot(\sum_{i=0}^{|\textbf{x}|}(\textbf{x}_ib^{
 
 After each adjustment, if the loss of the overall model has been reduced, the parameter is value is preserved. If the loss stagnates or the iteration limit `iterationLimit` is reached, training exits. After training is complete, the last preserved parameter value is used to minimise loss.
 
-#### Naive model training (`ExponentialRegression.train_naive(x, y, initialPrecision, finalPrecision)`)
-
-##### Parameter initialisation
-
-$a = y_0$
-
-$b = (\frac{y_0}{x_0})^{x_0^{-1}}, x_0 \neq 0; (\frac{y_1}{x_1})^{x_1^{-1}}, otherwise$
-
-- $y$: model output
-- $x$: model input
-- $a, b$: model parameters
-
-The same parameter initialisation is used as Newton-Raphson training, where the first output value is assumed as the target output for when the model input is 0.
-
-##### Parameter optimisation
+##### Naive parameter optimisation  (`ExponentialRegression.train_naive(x, y, initialPrecision, finalPrecision)`)
 
 Since the parameter $a$ is assumed to be the correct value, only the parameter $b$ is varied. The parameter $b$ is varied incrementally, with the increment starting with the value `10^initialPrecision`. The increment is added to $b$ until the model loss increases, when the increment is reversed. Once this pass is completed for a increment, the increment is reduced and another pass is completed. Once the pass for the increment `10^finalPrecision` is complete, training is complete.
 
