@@ -70,7 +70,7 @@ Some models also implement the following methods:
 - `train_(x, y)`: An alternative training method that may produce different and, in limited cases, more accurate results than `train`
 - `train_naive(x, y)`: A naive training method that produces accurate results but is considerably less efficient than other algorithms
 
-Each model file also includes some short training and testing examples within the following functions:
+Each model file also includes some short training and testing examples with some or all of the following functions:
 
 - `example_train()`: Train using `.train()`, output a series of example testing values and model loss compared to the target model
 - `example_train_naive()`: Train using `.train_naive()`, output a series of example testing values and model loss compared to the target model
