@@ -75,6 +75,13 @@ Each model file also includes some short training and testing examples within th
 - `example_train()`: Train using `.train()`, output a series of example testing values and model loss compared to the target model
 - `example_train_naive()`: Train using `.train_naive()`, output a series of example testing values and model loss compared to the target model
 
+```
+import exponential_regression as exp_reg # Import model file with model class and example functions
+
+exp_reg.example_train() # Train and test using ExponentialModel.train()
+exp_reg.example_train_naive() # Train and test using ExponentialModel.train_naive()
+```
+
 ## Model types
 
 ### Linear regression (`LinearRegression`)
