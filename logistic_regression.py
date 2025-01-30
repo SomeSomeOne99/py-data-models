@@ -1,5 +1,5 @@
 from base_model import Model # Import base Model class
-from math import exp # Import exponential function
+from math import exp, log # Import exponential and logarithm function
 class LogisticRegression(Model):
     def __init__(self, m = None, a = None, b = None): # No initial weights by default
         self.m, self.a, self.b = m, a, b # Set initial weights if given
@@ -11,8 +11,9 @@ class LogisticRegression(Model):
             raise ValueError("Data lists must be same length") # Data length mismatch
         # Set initial values
         self.m = max(y) if yLimit is None else yLimit # Initially assume that maximum value is limit if no limit given
-        self.a = -1.1 # Initialise to arbitrary constants
-        self.b = -1.1
+        abs_x = [abs(val) for val in x]
+        self.a = log((1 / y[abs_x.index(min(abs_x))]) - 1) # Estimate parameters, assuming min(abs(x))=0, therefore y=1/(1+e^a)
+        self.b = (log((1 / y[abs_x.index(max(abs_x))]) - 1) - self.a) / x[abs_x.index(max(abs_x))] # Use final point for more accurate estimation
         loss = self.loss(x, y) # Calculate initial MSE loss
         minLoss = float("inf")
         minLossM, minLossA, minLossB = self.m, self.a, self.b # Used to revert changes that increase loss
@@ -49,3 +50,4 @@ def example_train():
     print("a", expModel.a, "->", targetModel.a)
     print("b", expModel.b, "->", targetModel.b)
     print(expModel.loss([a for a in range(-30, 30)], [targetModel.predict(a) for a in range(-30, 30)]))
+example_train()
