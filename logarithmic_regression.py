@@ -1,6 +1,6 @@
-from base_model import Model # Import base Model class
+from base_model import Model, time_function # Import base Model class
 from math import log # Import ln()
-class LinearRegression(Model):
+class LogarithmicRegression(Model):
     def __init__(self, a = None, b = None): # No initial weights by default
         self.a, self.b = a, b
     def train(self, x, y, iterationLimit = 10000): # Train model weights on given data
@@ -27,11 +27,18 @@ class LinearRegression(Model):
             return None # No learned weights
         return self.a + self.b * log(x) # Apply weights to input
 def example_train():
-    logModel = LinearRegression()
-    targetModel = LinearRegression(2, 4)
+    logModel = LogarithmicRegression()
+    targetModel = LogarithmicRegression(2, 4)
     logModel.train([x for x in range(1, 20)], [targetModel.predict(x) for x in range(1, 20)])
     for x in [1, 5, 10, 20]:
         print(x, ":", logModel.predict(x), "->", targetModel.predict(x))
     print("a", logModel.a, "->", targetModel.a)
     print("b", logModel.b, "->", targetModel.b)
     print(logModel.loss([x for x in range(1, 20)], [targetModel.predict(x) for x in range(1, 20)]))
+def example_train_long():
+    logModel = LogarithmicRegression()
+    targetModel = LogarithmicRegression(2, 0.04)
+    logModel.train([x for x in range(1, 1000)], [targetModel.predict(x) for x in range(1, 1000)])
+def time_example_train_long():
+    time_function(example_train_long, repetitions = 10)
+time_example_train_long()

@@ -1,5 +1,6 @@
-from base_model import Model # Import base Model class
+from base_model import Model, time_function # Import base Model class
 from math import exp, log # Import exponential and logarithm function
+import timeit # Import timeit module
 class LogisticRegression(Model):
     def __init__(self, m = None, a = None, b = None): # No initial weights by default
         self.m, self.a, self.b = m, a, b # Set initial weights if given
@@ -50,4 +51,9 @@ def example_train():
     print("a", expModel.a, "->", targetModel.a)
     print("b", expModel.b, "->", targetModel.b)
     print(expModel.loss([a for a in range(-30, 30)], [targetModel.predict(a) for a in range(-30, 30)]))
-example_train()
+def example_train_long(): # Longer training method for timing
+    expModel = LogisticRegression()
+    targetModel = LogisticRegression(1, 5, -1) # Used to generate data to train model with
+    expModel.train([a for a in range(-500, 500)], [targetModel.predict(a) for a in range(-500, 500)], 1) # Train with Newton-Raphson method
+def time_example_train_long():
+    time_function(example_train_long) # Time training method

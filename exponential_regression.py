@@ -1,4 +1,4 @@
-from base_model import Model # Import base Model class
+from base_model import Model, time_function # Import base Model class
 class ExponentialRegression(Model):
     def __init__(self, a = None, b = None): # No initial weights by default
         self.a, self.b = a, b # Set initial weights if given
@@ -68,3 +68,9 @@ def example_train_naive():
     print("a", ":", expModel.a, "->", targetModel.a)
     print("b", ":", expModel.b, "->", targetModel.b)
     print("loss:", expModel.loss([x for x in range(15)], [targetModel.predict(x) for x in range(15)]))
+def example_train_long():
+    expModel = ExponentialRegression()
+    targetModel = ExponentialRegression(0.02, -0.5)
+    expModel.train([x for x in range(1000)], [targetModel.predict(x) for x in range(1000)]) # Train with Newton-Raphson method
+def time_example_train_long():
+    time_function(example_train_long, repetitions = 10) # Time training function

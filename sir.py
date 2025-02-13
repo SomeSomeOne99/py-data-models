@@ -1,4 +1,4 @@
-from base_model import Model # Import base Model class
+from base_model import Model, time_function # Import base Model class
 class SIR(Model):
     def __init__(self, infRate = None, recRate = None): # (infection rate, recovery rate) No initial weights by default
         self.infRate, self.recRate = infRate, recRate # Set initial weights if given
@@ -131,3 +131,9 @@ def example_train_naive():
     print("infRate", sirModel.infRate, "->", targetModel.infRate)
     print("recRate", sirModel.recRate, "->", targetModel.recRate)
     print("loss", sirModel.loss([x for x in range(100)], [targetModel.predict(x) for x in range(100)]))
+def example_train_long():
+    sirModel = SIR()
+    targetModel = SIR(0.75, 0.5)
+    sirModel.train([x for x in range(1000)], [targetModel.predict(x) for x in range(1000)]) # Train with Newton-Raphson method
+def time_example_train_long():
+    time_function(example_train_long, repetitions = 10)
