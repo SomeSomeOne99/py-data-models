@@ -1,9 +1,21 @@
 from base_model import Model # Import base Model class
+from random import random # Import random function
 class ARIMA(Model): # General model class
     def __init__(self):
         self.const, self.ar_coef, self.diff, self.ma_coef = 0, [0], 0, [0] # Initialize coefficients
-    #def train(self, y): # Train parameters of model to given data
-    #    pass
+    def train(self, x, ar_order, diff_order, ma_order, iterationLimit = 1000): # Train parameters of model to given data with given orders
+        def get_residual(x, predictions, i):
+            return x[i] - self.const - sum([self.ar_coef[j] * (predictions[i - j] if i - j >= 0 else x[i - j]) for j in range(1, len(self.ar_coef))]) - sum([self.ma_coef[j] * (predictions[i - j] - x[i - j]) for j in range(1, len(self.ma_coef)) if 0 <= i - j < len(x)])
+        self.ar_coef = [random()] * (ar_order + 1) # Initialize random AR coefficients
+        self.diff = diff_order
+        self.ma_coef = [random()] * (ma_order + 1) # Initialize random MA coefficients
+        x_diff, _ = self.difference(x, diff_order) # Apply differencing
+        for _ in range(iterationLimit):
+            predictions = self.predict(x, forecasts = 0, forecasts_only = False) # Get predictions for current parameters
+            for i in range(len(self.ar_coef)):
+                self.ar_coef[i] -= -2 * sum([((predictions[j] - x[j]) * x_diff[j]) for j in range(len(x))])
+                self.const -= -2 * sum([(predictions[j] - x[j]) for j in range(len(x))])
+                self.ma_coef[i] -= -2 * sum([((predictions[j] - x[j]) * get_residual(x, predictions, j)) for j in range(len(x))])
     def difference(self, x, d): # Apply differencing to input list
         x_lasts = [] # Store last values for reverse differencing
         for _ in range(d):
