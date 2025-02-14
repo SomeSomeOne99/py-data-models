@@ -41,4 +41,3 @@ def example_train_long():
     logModel.train([x for x in range(1, 1000)], [targetModel.predict(x) for x in range(1, 1000)])
 def time_example_train_long():
     time_function(example_train_long, repetitions = 10)
-time_example_train_long()
