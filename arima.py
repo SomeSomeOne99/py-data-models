@@ -1,8 +1,8 @@
 from base_model import Model # Import base Model class
 from random import random # Import random function
 class ARIMA(Model): # General model class
-    def __init__(self):
-        self.const, self.ar_coef, self.diff, self.ma_coef = 0, [0], 0, [0] # Initialize coefficients
+    def __init__(self, const = 0, ar_coef = [0], diff = 0, ma_coef = [0]): # Initialize model with given parameters
+        self.const, self.ar_coef, self.diff, self.ma_coef = const, ar_coef, diff, ma_coef # Set parameters
     def train(self, x, ar_order, diff_order, ma_order, iterationLimit = 1000): # Train parameters of model to given data with given orders
         def get_residual(x, predictions, i):
             return x[i] - self.const - sum([self.ar_coef[j] * (predictions[i - j] if i - j >= 0 else x[i - j]) for j in range(1, len(self.ar_coef))]) - sum([self.ma_coef[j] * (predictions[i - j] - x[i - j]) for j in range(1, len(self.ma_coef)) if 0 <= i - j < len(x)])
