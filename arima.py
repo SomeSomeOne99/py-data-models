@@ -31,14 +31,12 @@ class ARIMA(Model): # General model class
         for d in range(self.diff):
             x_diff = remove_differencing_step(x_diff, x_lasts[-1 - d]) # Reverse differencing
         return x_diff
-    def predict(self, x, forecasts = 10, forecasts_only = True): # Return model prediction for given inputs list
+    def predict(self, x, forecasts_num = 10, forecasts_only = True): # Return model prediction for given inputs list
         x, x_lasts = self.difference(x, self.diff) # Apply differencing
         predictions_diff = []
-        for i in range(len(x) + forecasts):
+        for i in range(len(x) + forecasts_num):
             predictions_diff.append(self.const + sum([self.ar_coef[j] * (predictions_diff[i - j] if i - j >= len(x) else x[i - j]) for j in range(1, len(self.ar_coef)) if i - j >= 0]) + sum([self.ma_coef[j] * (predictions_diff[i - j] - x[i - j]) for j in range(1, len(self.ma_coef)) if 0 <= i - j < len(x)]))
-        if forecasts > 0:
-            forecasts = self.reverse_difference(predictions_diff[-forecasts:], x_lasts) # Separate forecasts and invert differencing
-        return ([] if forecasts_only else (predictions_diff[:-forecasts] if forecasts > 0 else predictions_diff)) + forecasts
+        return ([] if forecasts_only else self.reverse_difference((predictions_diff[:-forecasts_num] if forecasts_num > 0 else predictions_diff), x_lasts)) + (self.reverse_difference(predictions_diff[-forecasts_num:], x_lasts) if forecasts_num > 0 else [])
     def loss(self, x):
         predictions = self.predict(x, forecasts = 0, forecasts_only = False)
         return sum([(x[i] - predictions[i])**2 for i in range(len(x))]) / len(x) # Return MSE loss
