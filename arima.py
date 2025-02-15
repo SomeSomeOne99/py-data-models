@@ -31,6 +31,10 @@ class ARIMA(Model): # General model class
         for d in range(self.diff):
             x_diff = remove_differencing_step(x_diff, x_lasts[-1 - d]) # Reverse differencing
         return x_diff
+    def normalise(self, x): # Normalise input list
+        x_min = min(x)
+        x_range = max(x) - min(x)
+        return [(x[i] - x_min) / x_range for i in range(len(x))] # Normalise values
     def predict(self, x, forecasts_num = 10, forecasts_only = True): # Return model prediction for given inputs list
         x, x_lasts = self.difference(x, self.diff) # Apply differencing
         predictions_diff = []
