@@ -20,7 +20,7 @@ class ARIMA(Model): # General model class
         x_lasts = [] # Store last values for reverse differencing
         for _ in range(d):
             x_lasts.append(x[-1]) # Store last value
-            x = [x[i] - x[i - 1] for i in range(1, len(x))] # Apply differencing
+            x = [0] + [x[i] - x[i - 1] for i in range(1, len(x))] # Apply differencing
         return x, x_lasts
     def reverse_difference(self, x_diff, x_lasts): # Reverse differencing of input list
         def remove_differencing_step(x_diff, initial):
