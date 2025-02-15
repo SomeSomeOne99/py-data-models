@@ -32,30 +32,30 @@ class ARIMA(Model): # General model class
                     print("nan!!")
                     self.ma_coef[i] = random() # Re-initialise parameter
     def difference(self, x, d): # Apply differencing to input list
-        x_lasts = [] # Store last values for reverse differencing
+        x_initials = [] # Store last values for reverse differencing
         for _ in range(d):
-            x_lasts.append(x[-1]) # Store last value
+            x_initials.append(x[0]) # Store first value
             x = [0] + [x[i] - x[i - 1] for i in range(1, len(x))] # Apply differencing
-        return x, x_lasts
-    def reverse_difference(self, x_diff, x_lasts): # Reverse differencing of input list
+        return x, x_initials
+    def reverse_difference(self, x_diff, x_initials): # Reverse differencing of input list
         def remove_differencing_step(x_diff, initial):
             x = [initial] # Start at initial value
             for i in range(len(x_diff)):
                 x.append(x[-1] + x_diff[i]) # Reverse differencing
             return x[1:] # Remove initial value
-        for d in range(self.diff):
-            x_diff = remove_differencing_step(x_diff, x_lasts[-1 - d]) # Reverse differencing
+        for d in range(len(x_initials)):
+            x_diff = remove_differencing_step(x_diff, x_initials[-1 - d]) # Reverse differencing
         return x_diff
     def normalise(self, x): # Normalise input list
         x_min = min(x)
         x_range = max(x) - min(x)
         return [(x[i] - x_min) / x_range for i in range(len(x))] # Normalise values
     def predict(self, x, forecasts_num = 10, forecasts_only = True): # Return model prediction for given inputs list
-        x, x_lasts = self.difference(x, self.diff) # Apply differencing
+        x, x_initials = self.difference(x, self.diff) # Apply differencing
         predictions_diff = []
         for i in range(len(x) + forecasts_num):
             predictions_diff.append(self.const + sum([self.ar_coef[j] * (predictions_diff[i - j] if i - j >= len(x) else x[i - j]) for j in range(1, len(self.ar_coef)) if i - j >= 0]) + sum([self.ma_coef[j] * (predictions_diff[i - j] - x[i - j]) for j in range(1, len(self.ma_coef)) if 0 <= i - j < len(x)]))
-        return ([] if forecasts_only else self.reverse_difference((predictions_diff[:-forecasts_num] if forecasts_num > 0 else predictions_diff), x_lasts)) + (self.reverse_difference(predictions_diff[-forecasts_num:], x_lasts) if forecasts_num > 0 else [])
+        return ([] if forecasts_only else self.reverse_difference((predictions_diff[:-forecasts_num] if forecasts_num > 0 else predictions_diff), x_initials)) + (self.reverse_difference(predictions_diff[-forecasts_num:], x_initials) if forecasts_num > 0 else [])
     def loss(self, x):
         predictions = self.predict(x, forecasts_num = 0, forecasts_only = False)
         return sum([(x[i] - predictions[i])**2 for i in range(len(x))]) / len(x) # Return MSE loss
