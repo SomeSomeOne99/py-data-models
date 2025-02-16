@@ -41,7 +41,7 @@ class ARIMA(Model): # General model class
         def remove_differencing_step(x_diff, initial):
             x = [initial] # Start at initial value
             for i in range(len(x_diff)):
-                x.append(x[-1] + x_diff[i]) # Reverse differencing
+                x.append(x[-1] + x_diff[i] - self.const) # Reverse differencing
             return x[1:] # Remove initial value
         for d in range(len(x_initials)):
             x_diff = remove_differencing_step(x_diff, x_initials[-1 - d]) # Reverse differencing
