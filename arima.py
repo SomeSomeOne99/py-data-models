@@ -1,4 +1,4 @@
-from base_model import Model # Import base Model class
+from base_model import Model, grid_search # Import base Model class
 from random import random # Import random function
 from math import isnan # Import isnan function
 import matplotlib.pyplot as plt
@@ -87,12 +87,18 @@ arimaModel.train(inputs, 2, 0, 2) # Train model on full inputs
 predictions3 = arimaModel.predict(inputs, 50, forecasts_only = False) # Predict data from full inputs
 print(arimaModel.loss(inputs))
 
+loss, hyperparameters = grid_search(arimaModel, inputs, None, list(range(1, 15)), [0], list(range(1, 5)))
+arimaModel.train(inputs, *hyperparameters) # Train model on full inputs
+predictions_best = arimaModel.predict(inputs, 50, forecasts_only = False) # Predict data from full inputs
+print(arimaModel.loss(inputs), hyperparameters)
+
 # Plot predictions
 plt.figure(figsize=(12, 6))
 plt.plot(range(len(inputs)), inputs, label='Input Data')
 plt.plot(range(len(predictions)), predictions, label='Predictions', linestyle='--')
 plt.plot(range(len(predictions2)), predictions2, label='Predictions2', linestyle='dotted')
 plt.plot(range(len(predictions3)), predictions3, label='Predictions3', linestyle='-')
+plt.plot(range(len(predictions_best)), predictions_best, label='Predictions (Best)', linestyle='solid')
 plt.legend()
 plt.title('ARIMA Model Predictions')
 plt.xlabel('Time')
