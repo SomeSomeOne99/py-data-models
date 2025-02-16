@@ -62,9 +62,11 @@ class ARIMA(Model): # General model class
         for i in range(len(x) + forecasts_num):
             predictions_diff.append(self.const + sum([self.ar_coef[j] * (predictions_diff[i - j] if i - j >= len(x) else x[i - j]) for j in range(1, len(self.ar_coef)) if i - j >= 0]) + sum([self.ma_coef[j] * (predictions_diff[i - j] - x[i - j]) for j in range(1, len(self.ma_coef)) if 0 <= i - j < len(x)]))
         return ([] if forecasts_only else (predictions_diff[:-forecasts_num] if forecasts_num > 0 else predictions_diff)) + (predictions_diff[-forecasts_num:] if forecasts_num > 0 else [])
-    def loss(self, x):
-        predictions = self.predict(x, forecasts_num = 0, forecasts_only = False)
-        return sum([(x[i] - predictions[i])**2 for i in range(len(x))]) / len(x) # Return MSE loss
+    def loss(self, x, targets = None):
+        if targets is None:
+            targets = x # If no targets given, use inputs as targets
+        predictions = self.predict(x, forecasts_num = len(targets) - len(x), forecasts_only = False) # Calculate predictions with forecasts as necessary to match length of targets
+        return sum([(targets[i] - predictions[i])**2 for i in range(len(targets))]) / len(targets) # Return MSE loss
 
 arimaModel = ARIMA() # Create ARIMA model
 
