@@ -55,7 +55,7 @@ class ARIMA(Model): # General model class
         predictions_diff = []
         for i in range(len(x) + forecasts_num):
             predictions_diff.append(self.const + sum([self.ar_coef[j] * (predictions_diff[i - j] if i - j >= len(x) else x[i - j]) for j in range(1, len(self.ar_coef)) if i - j >= 0]) + sum([self.ma_coef[j] * (predictions_diff[i - j] - x[i - j]) for j in range(1, len(self.ma_coef)) if 0 <= i - j < len(x)]))
-        return ([] if forecasts_only else self.reverse_difference((predictions_diff[:-forecasts_num] if forecasts_num > 0 else predictions_diff), x_initials)) + (self.reverse_difference(predictions_diff[-forecasts_num:], x_initials) if forecasts_num > 0 else [])
+        return self.reverse_difference(([] if forecasts_only else ((predictions_diff[:-forecasts_num] if forecasts_num > 0 else predictions_diff))) + (predictions_diff[-forecasts_num:] if forecasts_num > 0 else []), x_initials)
     def loss(self, x):
         predictions = self.predict(x, forecasts_num = 0, forecasts_only = False)
         return sum([(x[i] - predictions[i])**2 for i in range(len(x))]) / len(x) # Return MSE loss
