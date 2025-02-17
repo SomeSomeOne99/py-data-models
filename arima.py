@@ -1,4 +1,5 @@
-from base_model import Model, grid_search # Import base Model class
+from base_model import Model # Import base Model class
+from grid_search import grid_search
 from random import random # Import random function
 from math import isnan # Import isnan function
 import matplotlib.pyplot as plt
@@ -67,40 +68,40 @@ class ARIMA(Model): # General model class
             targets = x # If no targets given, use inputs as targets
         predictions = self.predict(x, forecasts_num = len(targets) - len(x), forecasts_only = False) # Calculate predictions with forecasts as necessary to match length of targets
         return sum([(targets[i] - predictions[i])**2 for i in range(len(targets))]) / len(targets) # Return MSE loss
+if __name__ == "__main__":
+    arimaModel = ARIMA() # Create ARIMA model
 
-arimaModel = ARIMA() # Create ARIMA model
+    inputs = [random()] # Generate random inputs
+    for x in range(1, 500):
+        inputs.append(inputs[x - 1] + random() * 0.1 - 0.05)
+    inputs = arimaModel.normalise(inputs) # Normalise input data
 
-inputs = [random()] # Generate random inputs
-for x in range(1, 500):
-    inputs.append(inputs[x - 1] + random() * 0.1 - 0.05)
-inputs = arimaModel.normalise(inputs) # Normalise input data
+    arimaModel.train(inputs, 2, 0, 0) # Train model on full inputs
+    predictions = arimaModel.predict(inputs, 50, forecasts_only = False) # Predict data from full inputs
+    print(arimaModel.loss(inputs))
 
-arimaModel.train(inputs, 2, 0, 0) # Train model on full inputs
-predictions = arimaModel.predict(inputs, 50, forecasts_only = False) # Predict data from full inputs
-print(arimaModel.loss(inputs))
+    arimaModel.train(inputs, 2, 0, 1) # Train model on full inputs
+    predictions2 = arimaModel.predict(inputs, 50, forecasts_only = False) # Predict data from full inputs
+    print(arimaModel.loss(inputs))
 
-arimaModel.train(inputs, 2, 0, 1) # Train model on full inputs
-predictions2 = arimaModel.predict(inputs, 50, forecasts_only = False) # Predict data from full inputs
-print(arimaModel.loss(inputs))
+    arimaModel.train(inputs, 2, 0, 2) # Train model on full inputs
+    predictions3 = arimaModel.predict(inputs, 50, forecasts_only = False) # Predict data from full inputs
+    print(arimaModel.loss(inputs))
 
-arimaModel.train(inputs, 2, 0, 2) # Train model on full inputs
-predictions3 = arimaModel.predict(inputs, 50, forecasts_only = False) # Predict data from full inputs
-print(arimaModel.loss(inputs))
+    loss, hyperparameters = grid_search(arimaModel, inputs, None, 20, list(range(15)), [0], list(range(10)))
+    arimaModel.train(inputs, *hyperparameters) # Train model on full inputs
+    predictions_best = arimaModel.predict(inputs, 50, forecasts_only = False) # Predict data from full inputs
+    print(arimaModel.loss(inputs), hyperparameters)
 
-loss, hyperparameters = grid_search(arimaModel, inputs, None, list(range(1, 15)), [0], list(range(1, 5)))
-arimaModel.train(inputs, *hyperparameters) # Train model on full inputs
-predictions_best = arimaModel.predict(inputs, 50, forecasts_only = False) # Predict data from full inputs
-print(arimaModel.loss(inputs), hyperparameters)
-
-# Plot predictions
-plt.figure(figsize=(12, 6))
-plt.plot(range(len(inputs)), inputs, label='Input Data')
-plt.plot(range(len(predictions)), predictions, label='Predictions', linestyle='--')
-plt.plot(range(len(predictions2)), predictions2, label='Predictions2', linestyle='dotted')
-plt.plot(range(len(predictions3)), predictions3, label='Predictions3', linestyle='-')
-plt.plot(range(len(predictions_best)), predictions_best, label='Predictions (Best)', linestyle='solid')
-plt.legend()
-plt.title('ARIMA Model Predictions')
-plt.xlabel('Time')
-plt.ylabel('Value')
-plt.show()
+    # Plot predictions
+    plt.figure(figsize=(12, 6))
+    plt.plot(range(len(inputs)), inputs, label='Input Data')
+    plt.plot(range(len(predictions)), predictions, label='Predictions', linestyle='--')
+    plt.plot(range(len(predictions2)), predictions2, label='Predictions2', linestyle='dotted')
+    plt.plot(range(len(predictions3)), predictions3, label='Predictions3', linestyle='-')
+    plt.plot(range(len(predictions_best)), predictions_best, label='Predictions (Best)', linestyle='solid')
+    plt.legend()
+    plt.title('ARIMA Model Predictions')
+    plt.xlabel('Time')
+    plt.ylabel('Value')
+    plt.show()
