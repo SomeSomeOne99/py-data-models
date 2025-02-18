@@ -3,7 +3,10 @@ from multiprocessing import Process, Queue
 from time import sleep
 def grid_seach_worker(model: Model, inputs, targets, hyperparameterQueue: Queue, resultsQueue: Queue):
     while not hyperparameterQueue.empty():
-        selected_hyperparams = hyperparameterQueue.get(block = False)
+        try:
+            selected_hyperparams = hyperparameterQueue.get(block = False)
+        except:
+            break
         if targets is None:
             model.train(inputs, *selected_hyperparams)
             loss = model.loss(inputs)
