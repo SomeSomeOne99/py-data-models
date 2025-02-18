@@ -3,7 +3,7 @@ from multiprocessing import Process, Queue
 from time import sleep
 def grid_seach_worker(model: Model, inputs, targets, hyperparameterQueue: Queue, resultsQueue: Queue):
     while not hyperparameterQueue.empty():
-        selected_hyperparams = hyperparameterQueue.get()
+        selected_hyperparams = hyperparameterQueue.get(block = False)
         if targets is None:
             model.train(inputs, *selected_hyperparams)
             loss = model.loss(inputs)
@@ -37,8 +37,6 @@ def grid_search(model: Model, inputs, targets = None, worker_processes = 10, *hy
         processes = [Process(target = grid_seach_worker, args = (model, inputs, targets, hyperparameterQueue, resultsQueue), name = "grid_search_worker") for _ in range(worker_processes)] # Initialise processes
         for process in processes: # Start all processes
             process.start()
-        for process in processes:
-            process.join() # Wait for all processes to complete
         minLoss = float("inf")
         minLossHyperparams = [hyperparam[0] for hyperparam in hyperparams]
         while resultsCount > 0:
@@ -47,4 +45,6 @@ def grid_search(model: Model, inputs, targets = None, worker_processes = 10, *hy
                 minLoss = loss
                 minLossHyperparams = hyperparams.copy()
             resultsCount -= 1
+        for process in processes:
+            process.kill()
         return minLoss, minLossHyperparams
