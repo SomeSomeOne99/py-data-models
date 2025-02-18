@@ -88,7 +88,7 @@ if __name__ == "__main__":
     predictions3 = arimaModel.predict(inputs, 50, forecasts_only = False) # Predict data from full inputs
     print(arimaModel.loss(inputs))
 
-    loss, hyperparameters = grid_search(arimaModel, inputs, None, 20, list(range(15)), [0], list(range(10)))
+    loss, hyperparameters = grid_search(arimaModel, inputs, None, 20, list(range(15)), list(range(3)), list(range(10)))
     arimaModel.train(inputs, *hyperparameters) # Train model on full inputs
     predictions_best = arimaModel.predict(inputs, 50, forecasts_only = False) # Predict data from full inputs
     print(arimaModel.loss(inputs), hyperparameters)
