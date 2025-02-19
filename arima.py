@@ -17,7 +17,7 @@ class ARIMA(Model): # General model class
         for _ in range(iterationLimit):
             predictions = self.predict(x, forecasts_num = 0, forecasts_only = False) # Get predictions for current parameters
             for i in range(len(self.ar_coef)):
-                self.ar_coef[i] -= clip(2 * sum([((predictions[j] - x[j]) * x_diff[j]) for j in range(len(x))]) * 1e-5)
+                self.ar_coef[i] -= clip(2 * sum([((predictions[j] - x[j]) * x_diff[j - i - 1]) for j in range(len(x))]) * 1e-5)
                 self.ar_coef[i] = clip(self.ar_coef[i], -1, 1)
                 if isnan(self.ar_coef[i]):
                     print("nan!!")
@@ -27,7 +27,7 @@ class ARIMA(Model): # General model class
                 print("nan!!")
                 self.const = random() # Re-initialise parameter
             for i in range(len(self.ma_coef)):
-                self.ma_coef[i] -= clip(2 * sum([((predictions[j] - x[j]) ** 2) for j in range(len(x))]) * 1e-5)
+                self.ma_coef[i] -= clip(2 * sum([((predictions[j] - x[j]) * (predictions[j] - x[j - i - 1])) for j in range(len(x))]) * 1e-5)
                 self.ma_coef[i] = clip(self.ma_coef[i], -1, 1)
                 if isnan(self.ma_coef[i]):
                     print("nan!!")
