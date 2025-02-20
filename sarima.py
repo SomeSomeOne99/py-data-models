@@ -103,7 +103,7 @@ if __name__ == "__main__":
     plt.plot(range(len(predictions3)), predictions3, label='Predictions [3, 0, 1, 20]', linestyle='-')
     plt.plot(range(len(predictions_best)), predictions_best, label='Predictions (Best) ' + str(hyperparameters), linestyle='solid')
     plt.legend()
-    plt.title('ARIMA Model Predictions')
+    plt.title('SARIMA Model Predictions')
     plt.xlabel('Time')
     plt.ylabel('Value')
     plt.show()
