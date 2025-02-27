@@ -9,7 +9,7 @@ class SARIMA(Model): # General model class
     def train(self, x, ar_order, diff_order, ma_order, m, iterationLimit = 1000): # Train parameters of model to given data with given orders
         def clip(x, a = -.1, b = .1):
             return max(a, min(b, x))
-        self.const = random()
+        self.const = 0 #random()
         self.ar_coef = [random() for _ in range(ar_order)] # Initialize random AR coefficients
         self.diff = diff_order
         self.ma_coef = [random() for _ in range(ma_order)] # Initialize random MA coefficients
@@ -23,7 +23,7 @@ class SARIMA(Model): # General model class
                 if isnan(self.ar_coef[i]):
                     print("nan!!")
                     self.ar_coef[i] = random() # Re-initialise parameter
-            self.const -= clip(2 * sum([(predictions[j] - x[j]) for j in range(len(x))]) * 1e-5)
+            #self.const -= clip(2 * sum([(predictions[j] - x[j]) for j in range(len(x))]) * 1e-5)
             if isnan(self.const):
                 print("nan!!")
                 self.const = random() # Re-initialise parameter
