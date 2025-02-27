@@ -82,15 +82,15 @@ if __name__ == "__main__":
     predictions = sarimaModel.predict(inputs, 50, forecasts_only = False) # Predict data from full inputs
     print(sarimaModel.loss(inputs))
 
-    sarimaModel.train(inputs, 2, 0, 1, 20) # Train model on full inputs
+    sarimaModel.train(inputs, 2, 1, 0, 20) # Train model on full inputs
     predictions2 = sarimaModel.predict(inputs, 50, forecasts_only = False) # Predict data from full inputs
     print(sarimaModel.loss(inputs))
 
-    sarimaModel.train(inputs, 3, 0, 1, 20) # Train model on full inputs
+    sarimaModel.train(inputs, 2, 2, 0, 20) # Train model on full inputs
     predictions3 = sarimaModel.predict(inputs, 50, forecasts_only = False) # Predict data from full inputs
     print(sarimaModel.loss(inputs))
 
-    loss, hyperparameters = grid_search(sarimaModel, inputs, None, 20, list(range(15)), list(range(3)), list(range(10)), [20])
+    loss, hyperparameters = grid_search(sarimaModel, inputs, None, 20, list(range(10)), list(range(3)), list(range(5)), [20])
     sarimaModel.train(inputs, *hyperparameters) # Train model on full inputs
     predictions_best = sarimaModel.predict(inputs, 50, forecasts_only = False) # Predict data from full inputs
     print(sarimaModel.loss(inputs), hyperparameters)
@@ -99,8 +99,8 @@ if __name__ == "__main__":
     plt.figure(figsize=(12, 6))
     plt.plot(range(len(inputs)), inputs, label='Input Data')
     plt.plot(range(len(predictions)), predictions, label='Predictions [2, 0, 0, 20]', linestyle='--')
-    plt.plot(range(len(predictions2)), predictions2, label='Predictions [2, 0, 1, 20]', linestyle='dotted')
-    plt.plot(range(len(predictions3)), predictions3, label='Predictions [3, 0, 1, 20]', linestyle='-')
+    plt.plot(range(len(predictions2)), predictions2, label='Predictions [2, 1, 0, 20]', linestyle='dotted')
+    plt.plot(range(len(predictions3)), predictions3, label='Predictions [2, 2, 0, 20]', linestyle='-')
     plt.plot(range(len(predictions_best)), predictions_best, label='Predictions (Best) ' + str(hyperparameters), linestyle='solid')
     plt.legend()
     plt.title('SARIMA Model Predictions')
