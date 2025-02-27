@@ -36,15 +36,15 @@ class SARIMA(Model): # General model class
     def difference(self, x, d): # Apply differencing to input list
         x_initials = [] # Store last values for reverse differencing
         for _ in range(d):
-            x_initials.append(x[:self.m + 1]) # Store first season values
-            x = [0] + [x[i] - x[i - self.m] for i in range(1, len(x))] # Apply differencing
+            x_initials.append(x[:self.m + 2]) # Store first season values
+            x = [0]*(self.m + 1) + [x[i] - x[i - self.m] for i in range(self.m + 1, len(x))] # Apply differencing
         return x, x_initials
     def reverse_difference(self, x_diff, x_initials): # Reverse differencing of input list
         def remove_differencing_step(x_diff, initial):
             x = initial.copy() # Start at initial season values
-            for i in range(len(x_diff)):
-                x.append(x[-1 - self.m] + x_diff[i] - self.const) # Reverse differencing
-            return x[1:] # Remove initial value
+            for i in range(self.m + 1, len(x_diff)):
+                x.append(x[-self.m] + x_diff[i] - self.const) # Reverse differencing
+            return x # Remove initial value
         for d in range(len(x_initials)):
             x_diff = remove_differencing_step(x_diff, x_initials[-1 - d]) # Reverse differencing
         return x_diff
