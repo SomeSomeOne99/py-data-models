@@ -69,7 +69,7 @@ class SARIMA(Model): # General model class
             targets = x # If no targets given, use inputs as targets
         predictions = self.predict(x, forecasts_num = len(targets) - len(x), forecasts_only = False) # Calculate predictions with forecasts as necessary to match length of targets
         return sum([(targets[i] - predictions[i])**2 for i in range(len(targets))]) / len(targets) # Return MSE loss
-if __name__ == "__main__":
+if __name__ == "__main__" and False:
     sarimaModel = SARIMA() # Create ARIMA model
     inputs = [random() * 0.05]
     for _ in range(19):
